@@ -37,54 +37,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="es" data-page="inicio">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
     <link rel="stylesheet" href="css/estilo.css">
     <style>
-        .input-group {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
+        .registro-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
         }
-        .input-group input {
-            width: 100%;
-            padding-right: 40px;
+
+        .registro-icon {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            user-select: none;
+
+        .form-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .success-message {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #27ae60;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box">
-            <h2>Registro</h2>
+            <div class="registro-header">
+                <div class="registro-icon">📝</div>
+                <h2>Crear Cuenta</h2>
+            </div>
 
             <?php if (isset($mensaje)): ?>
-                <p><?php echo $mensaje; ?></p>
+                <div class="success-message"><?php echo $mensaje; ?></div>
             <?php endif; ?>
 
             <form method="POST" onsubmit="return validarFormulario();">
                 <label>Nombre completo:</label>
-                <input type="text" name="nombre" required>
+                <input type="text" name="nombre" placeholder="Tu nombre completo" required>
 
                 <label>Correo:</label>
-                <input type="email" name="correo" id="correo" required>
+                <input type="email" name="correo" id="correo" placeholder="tu@email.com" required>
 
                 <label>Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" name="contraseña" id="contraseña" required>
+                    <input type="password" name="contraseña" id="contraseña" placeholder="Mínimo 6 caracteres" required>
                     <span class="toggle-password" onclick="mostrarContrasena(this)">👁️</span>
                 </div>
 
                 <label>Repetir contraseña:</label>
                 <div class="input-group">
-                    <input type="password" id="repetir" required>
+                    <input type="password" id="repetir" placeholder="Confirma tu contraseña" required>
                     <span class="toggle-password" onclick="mostrarRepetir(this)">👁️</span>
                 </div>
 
@@ -101,9 +118,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </select>
 
                 <button type="submit">Registrarse</button>
+                
+                <div class="form-footer">
+                    <a href="login.php">¿Ya tienes cuenta? Inicia sesión</a>
+                    <span>|</span>
+                    <a href="index.php">Volver al inicio</a>
+                </div>
             </form>
-
-            <br><a href="index.php">Volver</a>
         </div>
     </div>
 

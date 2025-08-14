@@ -32,41 +32,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="es" data-page="inicio">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
     <link rel="stylesheet" href="css/estilo.css">
     <style>
-        .input-group {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
+        .login-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .input-group input {
-            width: 100%;
-            padding-right: 40px;
+        .login-icon {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            user-select: none;
+        .form-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
         }
 
-        .error {
-            color: red;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .form-footer a {
+            color: #667eea;
+            font-size: 0.95em;
+            margin: 0 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box">
-            <h2>Iniciar sesión</h2>
+            <div class="login-header">
+                <div class="login-icon">🔐</div>
+                <h2>Iniciar Sesión</h2>
+            </div>
 
             <?php if (!empty($mensaje)): ?>
                 <p class="error"><?php echo $mensaje; ?></p>
@@ -74,20 +79,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <form method="POST" onsubmit="return validarLogin();">
                 <label>Correo:</label>
-                <input type="email" name="correo" id="correo" required>
+                <input type="email" name="correo" id="correo" placeholder="tu@email.com" required>
 
                 <label>Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" name="contraseña" id="contraseña" required>
+                    <input type="password" name="contraseña" id="contraseña" placeholder="Tu contraseña" required>
                     <span class="toggle-password" onclick="mostrarContrasena(this)">👁️</span>
                 </div>
 
                 <button type="submit">Entrar</button>
-                <br>
-                <a href="recuperar.php">¿Olvidaste tu contraseña?</a>
+                
+                <div class="form-footer">
+                    <a href="recuperar.php">¿Olvidaste tu contraseña?</a>
+                    <span>|</span>
+                    <a href="index.php">Volver al inicio</a>
+                </div>
             </form>
-
-            <br><a href="index.php">Volver</a>
         </div>
     </div>
 

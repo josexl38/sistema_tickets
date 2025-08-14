@@ -17,48 +17,130 @@ $es_admin = es_admin_local($pdo, $_SESSION["usuario_id"]);
 <html lang="es" data-page="inicio">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel principal</title>
     <link rel="stylesheet" href="css/estilo.css">
     <style>
-        ul.opciones {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0 0 0;
+        .welcome-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2em;
+            margin-bottom: 30px;
         }
 
-        ul.opciones li {
-            margin: 15px 0;
-            font-size: 18px;
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
         }
 
-        ul.opciones a {
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .card-link {
             display: inline-block;
-            background-color: #003366;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 24px;
+            border-radius: 10px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        ul.opciones a:hover {
-            background-color: #005599;
+        .card-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-link::after {
+            display: none;
+        }
+
+        .admin-card {
+            border: 2px solid #f39c12;
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+        }
+
+        .logout-card {
+            border: 2px solid #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="box">
-            <h2>Bienvenido, <?php echo $_SESSION["usuario_nombre"]; ?></h2>
+            <h2 class="welcome-message">¡Hola, <?php echo $_SESSION["usuario_nombre"]; ?>! 👋</h2>
 
-            <ul class="opciones">
-                <li><a href="crear_ticket.php">➕ Crear nuevo ticket</a></li>
-                <li><a href="ver_ticket.php">📋 Ver mis tickets</a></li>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-icon">➕</div>
+                    <div class="card-title">Crear Ticket</div>
+                    <div class="card-description">Reporta un nuevo problema o solicitud</div>
+                    <a href="crear_ticket.php" class="card-link">Crear nuevo</a>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Mis Tickets</div>
+                    <div class="card-description">Revisa el estado de tus solicitudes</div>
+                    <a href="ver_ticket.php" class="card-link">Ver tickets</a>
+                </div>
+
                 <?php if ($es_admin): ?>
-                    <li><a href="admin_tickets.php">🛠️ Panel de administrador</a></li>
+                <div class="dashboard-card admin-card">
+                    <div class="card-icon">🛠️</div>
+                    <div class="card-title">Administración</div>
+                    <div class="card-description">Panel de control administrativo</div>
+                    <a href="admin_tickets.php" class="card-link">Acceder</a>
+                </div>
                 <?php endif; ?>
-                <li><a href="logout.php">🔒 Cerrar sesión</a></li>
-            </ul>
+
+                <div class="dashboard-card logout-card">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">Cerrar Sesión</div>
+                    <div class="card-description">Salir del sistema de forma segura</div>
+                    <a href="logout.php" class="card-link">Salir</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
