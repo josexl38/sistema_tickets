@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .login-icon {
             font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -59,9 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .form-footer a {
-            color: #667eea;
+            color: #3182ce;
             font-size: 0.95em;
             margin: 0 10px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -70,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="box">
             <div class="login-header">
                 <div class="login-icon">🔐</div>
-                <h2>Iniciar Sesión</h2>
+                <h2>Acceso al Sistema</h2>
             </div>
 
             <?php if (!empty($mensaje)): ?>
@@ -79,15 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <form method="POST" onsubmit="return validarLogin();">
                 <label>Correo:</label>
-                <input type="email" name="correo" id="correo" placeholder="tu@email.com" required>
+                <input type="email" name="correo" id="correo" placeholder="Ingresa tu correo electrónico" required>
 
                 <label>Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" name="contraseña" id="contraseña" placeholder="Tu contraseña" required>
+                    <input type="password" name="contraseña" id="contraseña" placeholder="Ingresa tu contraseña" required>
                     <span class="toggle-password" onclick="mostrarContrasena(this)">👁️</span>
                 </div>
 
-                <button type="submit">Entrar</button>
+                <button type="submit">Iniciar Sesión</button>
                 
                 <div class="form-footer">
                     <a href="recuperar.php">¿Olvidaste tu contraseña?</a>

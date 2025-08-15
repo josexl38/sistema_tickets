@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .registro-icon {
             font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -64,13 +64,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .success-message {
-            background: rgba(39, 174, 96, 0.1);
-            color: #27ae60;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #27ae60;
+            background: rgba(56, 161, 105, 0.1);
+            color: #2f855a;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #38a169;
             margin-bottom: 20px;
             font-weight: 600;
+            border: 1px solid rgba(56, 161, 105, 0.2);
         }
     </style>
 </head>
@@ -79,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="box">
             <div class="registro-header">
                 <div class="registro-icon">📝</div>
-                <h2>Crear Cuenta</h2>
+                <h2>Registro de Usuario</h2>
             </div>
 
             <?php if (isset($mensaje)): ?>
@@ -88,26 +89,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <form method="POST" onsubmit="return validarFormulario();">
                 <label>Nombre completo:</label>
-                <input type="text" name="nombre" placeholder="Tu nombre completo" required>
+                <input type="text" name="nombre" placeholder="Ingresa tu nombre completo" required>
 
                 <label>Correo:</label>
-                <input type="email" name="correo" id="correo" placeholder="tu@email.com" required>
+                <input type="email" name="correo" id="correo" placeholder="Ingresa tu correo electrónico" required>
 
                 <label>Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" name="contraseña" id="contraseña" placeholder="Mínimo 6 caracteres" required>
+                    <input type="password" name="contraseña" id="contraseña" placeholder="Crea una contraseña segura" required>
                     <span class="toggle-password" onclick="mostrarContrasena(this)">👁️</span>
                 </div>
 
                 <label>Repetir contraseña:</label>
                 <div class="input-group">
-                    <input type="password" id="repetir" placeholder="Confirma tu contraseña" required>
+                    <input type="password" id="repetir" placeholder="Repite la contraseña anterior" required>
                     <span class="toggle-password" onclick="mostrarRepetir(this)">👁️</span>
                 </div>
 
                 <label>Departamento:</label>
                 <select name="departamento" required>
-                    <option value="">-- Selecciona --</option>
+                    <option value="">-- Selecciona tu departamento --</option>
                     <option value="Administracion">Administracion</option>
                     <option value="Servicio VW">Servicio VW</option>
                     <option value="Servicio Seat">Servicio Seat</option>
@@ -117,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="Refacciones">Refacciones</option>
                 </select>
 
-                <button type="submit">Registrarse</button>
+                <button type="submit">Crear Cuenta</button>
                 
                 <div class="form-footer">
                     <a href="login.php">¿Ya tienes cuenta? Inicia sesión</a>

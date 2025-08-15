@@ -15,19 +15,22 @@ if (isset($_SESSION['usuario_id'])) {
     <link rel="stylesheet" href="css/estilo.css">
     <style>
         .welcome-header {
-            font-size: 2.5em;
+            font-size: 2.8em;
             margin-bottom: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
-            color: #2c3e50;
-            font-size: 1.2em;
+            color: #4a5568;
+            font-size: 1.3em;
             margin-bottom: 30px;
-            opacity: 0.8;
+            opacity: 0.9;
+            font-weight: 500;
         }
 
         .logo-section {
@@ -35,9 +38,9 @@ if (isset($_SESSION['usuario_id'])) {
         }
 
         .logo-icon {
-            font-size: 4em;
+            font-size: 4.5em;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -50,11 +53,11 @@ if (isset($_SESSION['usuario_id'])) {
             <div class="logo-section">
                 <div class="logo-icon">🎫</div>
                 <h2 class="welcome-header">Sistema de Tickets VW</h2>
-                <p class="subtitle">Gestión eficiente de soporte técnico</p>
+                <p class="subtitle">Plataforma profesional de soporte técnico</p>
             </div>
             <div class="botones">
-                <a href="registro.php">📝 Crear cuenta</a>
-                <a href="login.php">🔐 Iniciar sesión</a>
+                <a href="registro.php">📝 Crear Nueva Cuenta</a>
+                <a href="login.php">🔐 Acceder al Sistema</a>
             </div>
         </div>
     </div>
