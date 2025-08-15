@@ -8,7 +8,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $titulo = limpiar($_POST["titulo"]);
     $descripcion = limpiar($_POST["descripcion"]);
     $departamento = limpiar($_POST["departamento"]);
+    $prioridad = limpiar($_POST["prioridad"]);
+    $categoria = limpiar($_POST["categoria"]);
     $archivo = null;
+    $numero_ticket = generar_numero_ticket();
 
     // Manejar múltiples archivos (solo guarda el primero por ahora)
     if (!empty($_FILES["archivo"]["name"][0])) {
@@ -26,28 +29,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $stmt = $pdo->prepare("INSERT INTO tickets (id_usuario, tema, titulo, descripcion, archivo) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$_SESSION["usuario_id"], $tema, $titulo, $descripcion, $archivo]);
+    $stmt = $pdo->prepare("INSERT INTO tickets (id_usuario, numero_ticket, tema, titulo, descripcion, archivo, prioridad, categoria, departamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$_SESSION["usuario_id"], $numero_ticket, $tema, $titulo, $descripcion, $archivo, $prioridad, $categoria, $departamento]);
+    
+    $ticket_id = $pdo->lastInsertId();
+    
+    // Registrar actividad
+    log_actividad($pdo, $_SESSION["usuario_id"], "Ticket creado", "Ticket #$numero_ticket creado");
 
     // Notificación por correo
     $correo = $_SESSION["usuario_nombre"] . " <" . obtenerCorreoUsuario($_SESSION["usuario_id"], $pdo) . ">";
-    $asunto = "Nuevo Ticket creado: $titulo";
-    $mensaje = "Se ha creado un nuevo ticket con el siguiente detalle:\n\nTema: $tema\nTitulo: $titulo\nDepartamento: $departamento\n\nIngresa al sistema para ver mas detalles.";
+    $asunto = "Nuevo Ticket #$numero_ticket creado: $titulo";
+    $mensaje = "Se ha creado un nuevo ticket con el siguiente detalle:\n\nNúmero: $numero_ticket\nTema: $tema\nTitulo: $titulo\nPrioridad: $prioridad\nCategoría: $categoria\nDepartamento: $departamento\n\nIngresa al sistema para ver mas detalles.";
     $cabeceras = "From: soporte@vw-potosina.com.mx";
-    mail($correo, $asunto, $mensaje, $cabeceras);
+    enviar_notificacion_email($correo, $asunto, $mensaje);
 
     // Notificar al administrador
     $admin_email = "antonio.munoz@vw-potosina.com.mx";
-    $asunto_admin = "Nuevo ticket creado: $titulo";
+    $asunto_admin = "Nuevo ticket #$numero_ticket creado: $titulo";
     $mensaje_admin = "Un nuevo ticket ha sido creado:\n\n"
+        . "Número: $numero_ticket\n"
         . "Usuario: " . $_SESSION["usuario_nombre"] . "\n"
         . "Tema: $tema\n"
         . "Titulo: $titulo\n"
+        . "Prioridad: $prioridad\n"
+        . "Categoría: $categoria\n"
         . "Departamento: $departamento\n"
         . "Detalles del problema:\n$descripcion\n\n"
         . "Ingresa al sistema para revisarlo.";
     $cabeceras_admin = "From: sistema.ticket@vw-potosina.com.mx";
-    mail($admin_email, $asunto_admin, $mensaje_admin, $cabeceras_admin);
+    enviar_notificacion_email($admin_email, $asunto_admin, $mensaje_admin, "sistema.ticket@vw-potosina.com.mx");
 
 
     echo "
@@ -60,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <meta http-equiv='refresh' content='1;url=ver_ticket.php'>
         <style>
             .box h2 {
-                color: #003366;
+                color: #003366 !important;
                 margin-bottom: 15px;
             }
             .mensaje-exito {
@@ -76,6 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class='container'>
             <div class='box'>
                 <h2>✅ Ticket creado correctamente</h2>
+                <div class='alert alert-success'>
+                    Tu ticket #$numero_ticket ha sido creado exitosamente
+                </div>
                 <p class='mensaje-exito'>En unos segundos serás redirigido a la lista de tus tickets...</p>
                 <p><a href='ver_ticket.php'>Haz clic aquí si no eres redirigido automáticamente</a></p>
             </div>
@@ -105,9 +119,30 @@ function obtenerCorreoUsuario($id, $pdo) {
 <body>
     <div class="container">
         <div class="box">
-            <h2>Crear nuevo ticket</h2>
+            <h2>📝 Crear nuevo ticket</h2>
+            
+            <div class="alert alert-info">
+                Completa todos los campos para que podamos ayudarte de la mejor manera
+            </div>
 
             <form method="POST" enctype="multipart/form-data">
+                <label>Categoría del problema:</label>
+                <select name="categoria" required>
+                    <option value="">-- Selecciona el tipo --</option>
+                    <option value="Bug">🐛 Bug/Error del sistema</option>
+                    <option value="Feature Request">✨ Solicitud de nueva función</option>
+                    <option value="Consulta">❓ Consulta/Pregunta</option>
+                    <option value="Incidente">⚠️ Incidente/Problema urgente</option>
+                </select>
+                
+                <label>Prioridad:</label>
+                <select name="prioridad" required>
+                    <option value="">-- Selecciona la urgencia --</option>
+                    <option value="Baja">🟢 Baja - No es urgente</option>
+                    <option value="Media">🟡 Media - Moderadamente importante</option>
+                    <option value="Alta">🟠 Alta - Necesita atención pronto</option>
+                    <option value="Critica">🔴 Crítica - Requiere atención inmediata</option>
+                </select>
                 <label>Tema de ayuda:</label>
                 <select name="tema" required>
                     <option value="">-- Selecciona --</option>
@@ -140,6 +175,14 @@ function obtenerCorreoUsuario($id, $pdo) {
 
                 <label>Adjuntar archivos (max 5):</label>
                 <input type="file" name="archivo[]" multiple>
+                
+                <div style="background: rgba(66, 153, 225, 0.1); padding: 16px; border-radius: 8px; margin: 16px 0; font-size: 0.9em; color: #2d3748;">
+                    <strong>💡 Consejos para un mejor soporte:</strong><br>
+                    • Describe el problema con el mayor detalle posible<br>
+                    • Incluye capturas de pantalla si es necesario<br>
+                    • Menciona qué estabas haciendo cuando ocurrió el problema<br>
+                    • Si es un error, incluye el mensaje exacto que aparece
+                </div>
 
                 <button type="submit">Crear ticket</button>
             </form>
