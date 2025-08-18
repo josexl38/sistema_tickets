@@ -21,9 +21,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["respuesta"])) {
         $respuesta = limpiar($_POST["respuesta"]);
         $autor = "Soporte VW";
+        
+        // Usar plantilla si se seleccionó
+        if (isset($_POST["plantilla_id"]) && !empty($_POST["plantilla_id"])) {
+            $stmt_plantilla = $pdo->prepare("SELECT contenido FROM plantillas_respuestas WHERE id = ?");
+            $stmt_plantilla->execute([$_POST["plantilla_id"]]);
+            $plantilla = $stmt_plantilla->fetch();
+            if ($plantilla) {
+                $respuesta = $plantilla['contenido'] . "\n\n" . $respuesta;
+            }
+        }
+        
         $stmt = $pdo->prepare("INSERT INTO respuestas (id_ticket, respuesta, autor) VALUES (?, ?, ?)");
         $stmt->execute([$id, $respuesta, $autor]);
 
+        // Crear notificación para el usuario
+        crear_notificacion($pdo, $ticket["id_usuario"], "Nueva respuesta", "Soporte ha respondido a tu ticket #$id", "info");
+        
+        // Log de actividad
+        log_actividad($pdo, $_SESSION["usuario_id"], "Respuesta agregada", "Ticket #$id - Respuesta de soporte");
         $stmt_user = $pdo->prepare("SELECT correo FROM usuarios WHERE id = ?");
         $stmt_user->execute([$ticket["id_usuario"]]);
         $correo = $stmt_user->fetchColumn();
@@ -35,6 +51,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["cerrar"])) {
         $stmt = $pdo->prepare("UPDATE tickets SET estado = 'Cerrado' WHERE id = ?");
         $stmt->execute([$id]);
+        
+        // Crear notificación
+        crear_notificacion($pdo, $ticket["id_usuario"], "Ticket cerrado", "Tu ticket #$id ha sido marcado como resuelto", "success");
+        
+        // Log de actividad
+        log_actividad($pdo, $_SESSION["usuario_id"], "Ticket cerrado", "Ticket #$id cerrado por administrador");
+    }
+
+    if (isset($_POST["cambiar_estado"])) {
+        $nuevo_estado = limpiar($_POST["nuevo_estado"]);
+        $stmt = $pdo->prepare("UPDATE tickets SET estado = ? WHERE id = ?");
+        $stmt->execute([$nuevo_estado, $id]);
+        
+        // Crear notificación
+        crear_notificacion($pdo, $ticket["id_usuario"], "Estado actualizado", "Tu ticket #$id cambió a: $nuevo_estado", "info");
+        
+        // Log de actividad
+        log_actividad($pdo, $_SESSION["usuario_id"], "Estado cambiado", "Ticket #$id cambió a: $nuevo_estado");
     }
 
     header("Location: admin_ver_ticket.php?id=$id");
@@ -44,6 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $stmt = $pdo->prepare("SELECT * FROM respuestas WHERE id_ticket = ?");
 $stmt->execute([$id]);
 $respuestas = $stmt->fetchAll();
+
+// Obtener plantillas de respuestas
+$plantillas = obtener_plantillas_respuestas($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -79,15 +116,40 @@ $respuestas = $stmt->fetchAll();
 <body>
     <div class="container">
         <div class="box">
-            <h2>Ticket #<?php echo $ticket["id"]; ?> - <?php echo $ticket["titulo"]; ?></h2>
+            <h2>🎫 Ticket #<?php echo $ticket["numero_ticket"] ?? $ticket["id"]; ?> - <?php echo $ticket["titulo"]; ?></h2>
 
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; padding: 16px; background: rgba(66, 153, 225, 0.1); border-radius: 12px;">
+                <div><strong>Estado:</strong> 
+                    <span class="<?php echo obtener_estado_clase($ticket["estado"]); ?>">
+                        <?php echo $ticket["estado"]; ?>
+                    </span>
+                </div>
+                <div><strong>Prioridad:</strong> 
+                    <span class="<?php echo obtener_prioridad_clase($ticket["prioridad"] ?? 'Media'); ?>">
+                        <?php echo $ticket["prioridad"] ?? 'Media'; ?>
+                    </span>
+                </div>
+                <div><strong>Categoría:</strong> 
+                    <span class="<?php echo obtener_categoria_clase($ticket["categoria"] ?? 'Consulta'); ?>">
+                        <?php echo $ticket["categoria"] ?? 'Consulta'; ?>
+                    </span>
+                </div>
+                <div><strong>Asignado:</strong> 
+                    <?php echo $ticket["tecnico_asignado"] ? "✅ Sí" : "❌ No"; ?>
+                </div>
+            </div>
             <p><strong>Tema:</strong> <?php echo $ticket["tema"]; ?></p>
             <p><strong>Descripcion:</strong><br><?php echo nl2br($ticket["descripcion"]); ?></p>
             <p><strong>Departamento:</strong> <?php echo $ticket["departamento"]; ?></p>
-            <p><strong>Estado:</strong> <?php echo $ticket["estado"]; ?></p>
 
             <?php if ($ticket["archivo"]): ?>
-                <p><strong>Archivo:</strong> <a href="<?php echo $ticket["archivo"]; ?>" target="_blank">Ver</a></p>
+                <p><strong>Archivos adjuntos:</strong><br>
+                <?php foreach (explode(",", $ticket["archivo"]) as $ruta): ?>
+                    <a href="<?php echo trim($ruta); ?>" target="_blank" style="display: inline-block; margin: 4px 8px 4px 0; padding: 4px 8px; background: #4299e1; color: white; border-radius: 4px; text-decoration: none;">
+                        📎 <?php echo basename(trim($ruta)); ?>
+                    </a>
+                <?php endforeach; ?>
+                </p>
             <?php endif; ?>
 
             <hr>
@@ -105,9 +167,46 @@ $respuestas = $stmt->fetchAll();
             <?php endif; ?>
 
             <hr>
-            <h3>Responder como soporte</h3>
+            
+            <!-- Acciones administrativas -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div style="background: rgba(255, 255, 255, 0.95); padding: 16px; border-radius: 12px; border-left: 4px solid #4299e1;">
+                    <h4>🔄 Cambiar Estado</h4>
+                    <form method="POST" style="background: none; padding: 0; box-shadow: none; border: none;">
+                        <select name="nuevo_estado" style="margin-bottom: 8px;">
+                            <option value="Abierto" <?php echo $ticket["estado"] === 'Abierto' ? 'selected' : ''; ?>>Abierto</option>
+                            <option value="En Progreso" <?php echo $ticket["estado"] === 'En Progreso' ? 'selected' : ''; ?>>En Progreso</option>
+                            <option value="Cerrado" <?php echo $ticket["estado"] === 'Cerrado' ? 'selected' : ''; ?>>Cerrado</option>
+                        </select>
+                        <button type="submit" name="cambiar_estado" style="width: 100%; margin: 0;">Actualizar Estado</button>
+                    </form>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.95); padding: 16px; border-radius: 12px; border-left: 4px solid #38a169;">
+                    <h4>⏱️ Información de Tiempo</h4>
+                    <p><strong>Creado:</strong> <?php echo tiempo_transcurrido($ticket["fecha_creacion"]); ?></p>
+                    <?php if ($ticket["fecha_limite"]): ?>
+                        <p><strong>Límite:</strong> <?php echo date('d/m/Y H:i', strtotime($ticket["fecha_limite"])); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <h3>💬 Responder como soporte</h3>
             <form method="POST">
-                <textarea name="respuesta" rows="4" cols="60" required></textarea><br>
+                <?php if (!empty($plantillas)): ?>
+                <label>Plantilla de respuesta (opcional):</label>
+                <select name="plantilla_id" onchange="cargarPlantilla(this.value)" style="margin-bottom: 16px;">
+                    <option value="">-- Seleccionar plantilla --</option>
+                    <?php foreach ($plantillas as $plantilla): ?>
+                        <option value="<?php echo $plantilla['id']; ?>" data-contenido="<?php echo htmlspecialchars($plantilla['contenido']); ?>">
+                            <?php echo $plantilla['titulo']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?php endif; ?>
+                
+                <label>Respuesta:</label>
+                <textarea name="respuesta" id="respuesta" rows="6" required placeholder="Escribe tu respuesta aquí..."></textarea>
                 <div class="acciones">
                     <button type="submit">Responder</button>
                     <?php if ($ticket["estado"] == "Abierto"): ?>
@@ -119,5 +218,20 @@ $respuestas = $stmt->fetchAll();
             <br><a href="admin_tickets.php">Volver al panel</a>
         </div>
     </div>
+
+<script>
+function cargarPlantilla(plantillaId) {
+    if (!plantillaId) return;
+    
+    const select = document.querySelector('select[name="plantilla_id"]');
+    const option = select.querySelector(`option[value="${plantillaId}"]`);
+    const textarea = document.getElementById('respuesta');
+    
+    if (option && textarea) {
+        const contenido = option.getAttribute('data-contenido');
+        textarea.value = contenido;
+    }
+}
+</script>
 </body>
 </html>

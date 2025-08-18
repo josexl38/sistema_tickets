@@ -149,6 +149,18 @@ $notificaciones_pendientes = $stmt_notif->fetchColumn();
                     </a>
                 </div>
 
+                <div class="dashboard-card">
+                    <div class="card-icon">notifications</div>
+                    <div class="card-title">Notificaciones</div>
+                    <div class="card-description">Revisa tus notificaciones y actualizaciones</div>
+                    <a href="notificaciones.php" class="card-link" style="position: relative;">
+                        <span class="icon">notifications</span>
+                        Ver Notificaciones
+                        <?php if ($notificaciones_pendientes > 0): ?>
+                            <span class="notification-badge"><?php echo $notificaciones_pendientes; ?></span>
+                        <?php endif; ?>
+                    </a>
+                </div>
                 <?php if ($es_admin): ?>
                 <div class="dashboard-card admin-card">
                     <div class="card-icon">admin_panel_settings</div>
