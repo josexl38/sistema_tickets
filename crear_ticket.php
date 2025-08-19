@@ -3,15 +3,24 @@ require_once "includes/db.php";
 require_once "includes/funciones.php";
 redirigir_si_no_logueado();
 
+function obtenerCorreoUsuario($id, $pdo) {
+    $stmt = $pdo->prepare("SELECT correo FROM usuarios WHERE id = ?");
+    $stmt->execute([$id]);
+    $res = $stmt->fetch();
+    return $res ? $res["correo"] : "antonio.munoz@vw-potosina.com.mx";
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tema = limpiar($_POST["tema"]);
     $titulo = limpiar($_POST["titulo"]);
     $descripcion = limpiar($_POST["descripcion"]);
     $departamento = limpiar($_POST["departamento"]);
-    $prioridad = limpiar($_POST["prioridad"]);
-    $categoria = limpiar($_POST["categoria"]);
+    $prioridad = limpiar($_POST["prioridad"] ?? 'Media');
+    $categoria = limpiar($_POST["categoria"] ?? 'Consulta');
     $archivo = null;
-    $numero_ticket = generar_numero_ticket();
+    
+    // Generar número de ticket simple
+    $numero_ticket = 'VW-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
     // Manejar múltiples archivos (solo guarda el primero por ahora)
     if (!empty($_FILES["archivo"]["name"][0])) {
@@ -29,23 +38,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $stmt = $pdo->prepare("INSERT INTO tickets (id_usuario, numero_ticket, tema, titulo, descripcion, archivo, prioridad, categoria, departamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$_SESSION["usuario_id"], $numero_ticket, $tema, $titulo, $descripcion, $archivo, $prioridad, $categoria, $departamento]);
+    $stmt = $pdo->prepare("INSERT INTO tickets (id_usuario, tema, titulo, descripcion, archivo, departamento, numero_ticket, prioridad, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$_SESSION["usuario_id"], $tema, $titulo, $descripcion, $archivo, $departamento, $numero_ticket, $prioridad, $categoria]);
     
     $ticket_id = $pdo->lastInsertId();
     
     // Registrar actividad
-    log_actividad($pdo, $_SESSION["usuario_id"], "Ticket creado", "Ticket #$numero_ticket creado");
+    if (function_exists('log_actividad')) {
+        log_actividad($pdo, $_SESSION["usuario_id"], "Ticket creado", "Ticket #$numero_ticket creado");
+    }
 
-    // Notificación por correo
+    // Notificación por correo al usuario
     $correo = $_SESSION["usuario_nombre"] . " <" . obtenerCorreoUsuario($_SESSION["usuario_id"], $pdo) . ">";
     $asunto = "Nuevo Ticket #$numero_ticket creado: $titulo";
     $mensaje = "Se ha creado un nuevo ticket con el siguiente detalle:\n\nNúmero: $numero_ticket\nTema: $tema\nTitulo: $titulo\nPrioridad: $prioridad\nCategoría: $categoria\nDepartamento: $departamento\n\nIngresa al sistema para ver mas detalles.";
     $cabeceras = "From: soporte@vw-potosina.com.mx";
-    enviar_notificacion_email($correo, $asunto, $mensaje);
+    
+    // Enviar email solo si la función existe
+    if (function_exists('enviar_notificacion_email')) {
+        enviar_notificacion_email($correo, $asunto, $mensaje);
+    } else {
+        // Fallback con mail() básico
+        @mail($correo, $asunto, $mensaje, $cabeceras);
+    }
 
     // Notificar al administrador
-    $admin_email = "antonio.munoz@vw-potosina.com.mx";
+    $admin_email = "soporte@vw-potosina.com.mx";
     $asunto_admin = "Nuevo ticket #$numero_ticket creado: $titulo";
     $mensaje_admin = "Un nuevo ticket ha sido creado:\n\n"
         . "Número: $numero_ticket\n"
@@ -58,10 +76,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         . "Detalles del problema:\n$descripcion\n\n"
         . "Ingresa al sistema para revisarlo.";
     $cabeceras_admin = "From: sistema.ticket@vw-potosina.com.mx";
-    enviar_notificacion_email($admin_email, $asunto_admin, $mensaje_admin, "sistema.ticket@vw-potosina.com.mx");
+    
+    if (function_exists('enviar_notificacion_email')) {
+        enviar_notificación_email($admin_email, $asunto_admin, $mensaje_admin);
+    } else {
+        @mail($admin_email, $asunto_admin, $mensaje_admin, $cabeceras_admin);
+    }
 
-
-    echo "
+    $mensaje_exito = "
     <!DOCTYPE html>
     <html lang='es' data-page='inicio'>
     <head>
@@ -97,15 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </body>
     </html>
     ";
+    echo $mensaje_exito;
     exit();
-
-}
-
-function obtenerCorreoUsuario($id, $pdo) {
-    $stmt = $pdo->prepare("SELECT correo FROM usuarios WHERE id = ?");
-    $stmt->execute([$id]);
-    $res = $stmt->fetch();
-    return $res ? $res["correo"] : "antonio.munoz@vw-potosina.com.mx";
 }
 ?>
 

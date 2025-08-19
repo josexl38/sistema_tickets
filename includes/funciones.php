@@ -84,7 +84,8 @@ function enviar_notificacion_email($destinatario, $asunto, $mensaje, $remitente 
 }
 
 function generar_numero_ticket() {
-    return 'VW-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+    // Generar número único con timestamp para evitar duplicados
+    return 'VW-' . date('Y') . '-' . str_pad(time() % 10000, 4, '0', STR_PAD_LEFT);
 }
 
 function validar_archivo($archivo) {
