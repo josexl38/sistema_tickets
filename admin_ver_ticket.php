@@ -2,6 +2,7 @@
 require_once "includes/db.php";
 require_once "includes/funciones.php";
 redirigir_si_no_logueado();
+
 if (!es_admin($pdo)) {
     echo "Acceso denegado.";
     exit();
@@ -40,12 +41,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Log de actividad
         log_actividad($pdo, $_SESSION["usuario_id"], "Respuesta agregada", "Ticket #$id - Respuesta de soporte");
+        
+        // Email al usuario
         $stmt_user = $pdo->prepare("SELECT correo FROM usuarios WHERE id = ?");
         $stmt_user->execute([$ticket["id_usuario"]]);
         $correo = $stmt_user->fetchColumn();
-        $asunto = "Respuesta de soporte en tu ticket #$id";
-        $mensaje = "Soporte ha respondido a tu ticket:\n\n$respuesta\n\nPuedes revisarlo en el sistema.";
-        mail($correo, $asunto, $mensaje, "From: soporte@vw-potosina.com.mx");
+        if ($correo) {
+            $asunto = "Respuesta de soporte en tu ticket #$id";
+            $mensaje = "Soporte ha respondido a tu ticket:\n\n$respuesta\n\nPuedes revisarlo en el sistema.";
+            @mail($correo, $asunto, $mensaje, "From: soporte@vw-potosina.com.mx");
+        }
     }
 
     if (isset($_POST["cerrar"])) {
@@ -114,6 +119,10 @@ $plantillas = obtener_plantillas_respuestas($pdo);
     </style>
 </head>
 <body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
+        <span class="toggle-icon">🌙</span>
+    </button>
+    
     <div class="container">
         <div class="box">
             <h2>🎫 Ticket #<?php echo $ticket["numero_ticket"] ?? $ticket["id"]; ?> - <?php echo $ticket["titulo"]; ?></h2>
@@ -138,9 +147,9 @@ $plantillas = obtener_plantillas_respuestas($pdo);
                     <?php echo $ticket["tecnico_asignado"] ? "✅ Sí" : "❌ No"; ?>
                 </div>
             </div>
+            
             <p><strong>Tema:</strong> <?php echo $ticket["tema"]; ?></p>
             <p><strong>Descripcion:</strong><br><?php echo nl2br($ticket["descripcion"]); ?></p>
-            <p><strong>Departamento:</strong> <?php echo $ticket["departamento"]; ?></p>
 
             <?php if ($ticket["archivo"]): ?>
                 <p><strong>Archivos adjuntos:</strong><br>
@@ -209,7 +218,7 @@ $plantillas = obtener_plantillas_respuestas($pdo);
                 <textarea name="respuesta" id="respuesta" rows="6" required placeholder="Escribe tu respuesta aquí..."></textarea>
                 <div class="acciones">
                     <button type="submit">Responder</button>
-                    <?php if ($ticket["estado"] == "Abierto"): ?>
+                    <?php if ($ticket["estado"] != "Cerrado"): ?>
                         <button name="cerrar" value="1">🔒 Cerrar ticket</button>
                     <?php endif; ?>
                 </div>
@@ -219,19 +228,45 @@ $plantillas = obtener_plantillas_respuestas($pdo);
         </div>
     </div>
 
-<script>
-function cargarPlantilla(plantillaId) {
-    if (!plantillaId) return;
-    
-    const select = document.querySelector('select[name="plantilla_id"]');
-    const option = select.querySelector(`option[value="${plantillaId}"]`);
-    const textarea = document.getElementById('respuesta');
-    
-    if (option && textarea) {
-        const contenido = option.getAttribute('data-contenido');
-        textarea.value = contenido;
-    }
-}
-</script>
+    <script>
+        function cargarPlantilla(plantillaId) {
+            if (!plantillaId) return;
+            
+            const select = document.querySelector('select[name="plantilla_id"]');
+            const option = select.querySelector(`option[value="${plantillaId}"]`);
+            const textarea = document.getElementById('respuesta');
+            
+            if (option && textarea) {
+                const contenido = option.getAttribute('data-contenido');
+                textarea.value = contenido;
+            }
+        }
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+            
+            localStorage.setItem('darkMode', isDark);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+        });
+    </script>
 </body>
 </html>

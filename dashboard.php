@@ -38,19 +38,35 @@ $notificaciones_pendientes = $stmt_notif->fetchColumn();
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+            
             localStorage.setItem('darkMode', isDark);
         }
         
         // Cargar preferencia de modo oscuro
         document.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('darkMode') === 'true') {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
                 document.body.classList.add('dark-mode');
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
             }
         });
     </script>
 </head>
 <body>
-    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro"></button>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
+        <span class="toggle-icon">🌙</span>
+    </button>
     
     <div class="container">
         <div class="box">

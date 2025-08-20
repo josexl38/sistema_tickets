@@ -10,6 +10,7 @@ if (!es_admin($pdo)) {
 
 // Ejecutar escalamiento automático
 escalamiento_automatico($pdo);
+
 // Si se recibe un ID para borrar
 if (isset($_GET["eliminar"])) {
     $id = intval($_GET["eliminar"]);
@@ -34,7 +35,9 @@ if (isset($_POST['asignar_tecnico'])) {
     $stmt_user->execute([$ticket_id]);
     $user_id = $stmt_user->fetchColumn();
     
-    crear_notificacion($pdo, $user_id, "Ticket asignado", "Tu ticket ha sido asignado a un técnico especializado", "info");
+    if ($user_id) {
+        crear_notificacion($pdo, $user_id, "Ticket asignado", "Tu ticket ha sido asignado a un técnico especializado", "info");
+    }
     
     header("Location: admin_tickets.php");
     exit();
@@ -72,6 +75,7 @@ $sql .= " ORDER BY
         WHEN 'Baja' THEN 4 
     END,
     t.fecha_creacion DESC";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $tickets = $stmt->fetchAll();
@@ -108,6 +112,10 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
     </style>
 </head>
 <body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
+        <span class="toggle-icon">🌙</span>
+    </button>
+    
     <div class="container" style="max-width: 100%;">
         <div class="box" style="max-width: 95%;">
             <h2>🛠️ Panel de administrador - Todos los tickets</h2>
@@ -116,22 +124,22 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon">confirmation_number</div>
-                    <div class="stat-number"><?php echo $stats['total_tickets']; ?></div>
+                    <div class="stat-number"><?php echo $stats['total_tickets'] ?? 0; ?></div>
                     <div class="stat-label">Total Tickets</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">radio_button_unchecked</div>
-                    <div class="stat-number"><?php echo $stats['tickets_abiertos']; ?></div>
+                    <div class="stat-number"><?php echo $stats['tickets_abiertos'] ?? 0; ?></div>
                     <div class="stat-label">Abiertos</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">warning</div>
-                    <div class="stat-number"><?php echo $stats['tickets_criticos']; ?></div>
+                    <div class="stat-number"><?php echo $stats['tickets_criticos'] ?? 0; ?></div>
                     <div class="stat-label">Críticos</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">schedule</div>
-                    <div class="stat-number"><?php echo $stats['tickets_sin_respuesta']; ?></div>
+                    <div class="stat-number"><?php echo $stats['tickets_sin_respuesta'] ?? 0; ?></div>
                     <div class="stat-label">Sin Respuesta +48h</div>
                 </div>
             </div>
@@ -190,6 +198,7 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
                     </div>
                 </form>
             </div>
+            
             <div class="wide-table">
                 <table>
                     <tr>
@@ -256,5 +265,33 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
             <a href="dashboard.php">Volver al inicio</a>
         </div>
     </div>
+    
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+            
+            localStorage.setItem('darkMode', isDark);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+        });
+    </script>
 </body>
 </html>
