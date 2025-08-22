@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt = $pdo->prepare("UPDATE usuarios SET token_confirmacion = ? WHERE correo = ?");
     if ($stmt->execute([$token, $correo])) {
-        $enlace = "http://192.168.45.6/sistema_tickets/reestablecer.php?token=$token";
+        $enlace = BASE_URL . "reestablecer.php?token=$token";
         $asunto = "Recuperacion de contrasena";
         $mensaje_correo = "Has solicitado recuperar tu contrasena.\n\nHaz clic en el siguiente enlace para crear una nueva:\n\n$enlace";
         $cabeceras = "From: soporte@vw-potosina.com.mx";
