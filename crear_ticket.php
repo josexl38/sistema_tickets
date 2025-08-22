@@ -56,12 +56,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $correo = obtenerCorreoUsuario($_SESSION["usuario_id"], $pdo);
             $asunto = "Nuevo Ticket #$numero_ticket creado: $titulo";
             $mensaje = "Se ha creado un nuevo ticket con el siguiente detalle:\n\n"
-                     . "Número: $numero_ticket\n"
+                     . "Numero: $numero_ticket\n"
                      . "Tema: $tema\n"
                      . "Titulo: $titulo\n"
                      . "Prioridad: $prioridad\n"
-                     . "Categoría: $categoria\n"
-                     . "Departamento: $departamento\n\n"
+                     . "Categoria: $categoria\n\n"
                      . "Ingresa al sistema para ver mas detalles.";
             $cabeceras = "From: soporte@vw-potosina.com.mx";
             
@@ -69,16 +68,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             @mail($correo, $asunto, $mensaje, $cabeceras);
 
             // Notificar al administrador
-            $admin_email = "soporte@vw-potosina.com.mx";
+            $admin_email = "antonio.munoz@vw-potosina.com.mx";
             $asunto_admin = "Nuevo ticket #$numero_ticket creado: $titulo";
             $mensaje_admin = "Un nuevo ticket ha sido creado:\n\n"
-                . "Número: $numero_ticket\n"
+                . "Numero: $numero_ticket\n"
                 . "Usuario: " . $_SESSION["usuario_nombre"] . "\n"
                 . "Tema: $tema\n"
                 . "Titulo: $titulo\n"
                 . "Prioridad: $prioridad\n"
-                . "Categoría: $categoria\n"
-                . "Departamento: $departamento\n"
+                . "Categoria: $categoria\n"
                 . "Detalles del problema:\n$descripcion\n\n"
                 . "Ingresa al sistema para revisarlo.";
             $cabeceras_admin = "From: sistema.ticket@vw-potosina.com.mx";

@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($correo) {
             $asunto = "Respuesta de soporte en tu ticket #$id";
             $mensaje = "Soporte ha respondido a tu ticket:\n\n$respuesta\n\nPuedes revisarlo en el sistema.";
-            @mail($correo, $asunto, $mensaje, "From: soporte@vw-potosina.com.mx");
+            enviar_notificacion_email($correo, $asunto, $mensaje);
         }
     }
 

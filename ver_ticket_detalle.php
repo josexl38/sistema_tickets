@@ -39,14 +39,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $asunto = "Respuesta registrada en tu ticket #$ticket_id";
     $mensaje = "Tu respuesta ha sido registrada:\n\n$respuesta\n\nPuedes seguir el seguimiento en el sistema.";
     $cabeceras = "From: soporte@vw-potosina.com.mx";
-    mail($correo, $asunto, $mensaje, $cabeceras);
+    @mail($correo, $asunto, $mensaje, $cabeceras);
 
     // Notificar al administrador
     $admin_email = "antonio.munoz@vw-potosina.com.mx";
-    $asunto_admin = " Nueva respuesta en el ticket #$ticket_id";
+    $asunto_admin = "Nueva respuesta en el ticket #$ticket_id";
     $mensaje_admin = "El usuario " . $_SESSION["usuario_nombre"] . " ha respondido al ticket:\n\n$respuesta\n\nIngresa al sistema para ver la conversacion.";
     $cabeceras_admin = "From: sistema.ticket@vw-potosina.com.mx";
-    mail($admin_email, $asunto_admin, $mensaje_admin, $cabeceras_admin);
+    @mail($admin_email, $asunto_admin, $mensaje_admin, $cabeceras_admin);
 
 
     // Redirigir para evitar reenvío del formulario

@@ -77,10 +77,14 @@ function tiempo_transcurrido($fecha) {
 }
 
 function enviar_notificacion_email($destinatario, $asunto, $mensaje, $remitente = "soporte@vw-potosina.com.mx") {
+    // Limpiar caracteres especiales para evitar problemas de codificacion
+    $asunto_limpio = str_replace(['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ'], ['a','e','i','o','u','n','A','E','I','O','U','N'], $asunto);
+    $mensaje_limpio = str_replace(['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ'], ['a','e','i','o','u','n','A','E','I','O','U','N'], $mensaje);
+    
     $cabeceras  = "From: $remitente\r\n";
     $cabeceras .= "Reply-To: $remitente\r\n";
-    $cabeceras .= "Content-Type: text/plain; charset=UTF-8\r\n";
-    return @mail($destinatario, $asunto, $mensaje, $cabeceras);
+    $cabeceras .= "Content-Type: text/plain; charset=ISO-8859-1\r\n";
+    return @mail($destinatario, $asunto_limpio, $mensaje_limpio, $cabeceras);
 }
 
 function generar_numero_ticket() {
