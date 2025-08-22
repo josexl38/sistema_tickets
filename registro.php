@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, contraseña, departamento, token_confirmacion) VALUES (?, ?, ?, ?, ?)");
         if ($stmt->execute([$nombre, $correo, $contraseña, $departamento, $token])) {
-            $enlace = "http://192.168.45.6/sistema_tickets/confirmar.php?token=$token";
+            $enlace = BASE_URL . "confirmar.php?token=$token";
             $asunto = "Confirmacion de cuenta - Sistema de Tickets";
             $mensaje_correo = "Hola $nombre,\n\nPara activar tu cuenta, haz clic en el siguiente enlace:\n\n$enlace\n\nSaludos,\nSistema de Soporte VW Potosina";
             $cabeceras = "From: soporte@vw-potosina.com.mx";
