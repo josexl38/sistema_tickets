@@ -1195,17 +1195,20 @@ body.dark-mode .dark-mode-toggle:hover {
 /* Estilos para modo oscuro */
 body.dark-mode {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-    color: #f7fafc;
+    color: #f7fafc !important;
 }
 
 body.dark-mode .box {
     background: rgba(45, 55, 72, 0.95);
-    color: #f7fafc;
+    color: #f7fafc !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.dark-mode h1,
 body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
 body.dark-mode .welcome-header,
 body.dark-mode .welcome-message {
     color: #f7fafc !important;
@@ -1247,15 +1250,26 @@ body.dark-mode .kb-detail-content {
     color: #f7fafc !important;
 }
 
-body.dark-mode label,
-body.dark-mode p,
-body.dark-mode div,
+/* Textos generales en modo oscuro */
+body.dark-mode label {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode p {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode div:not(.priority-critica):not(.priority-alta):not(.priority-media):not(.priority-baja):not(.estado-abierto):not(.estado-cerrado):not(.estado-en-progreso):not(.categoria-bug):not(.categoria-feature):not(.categoria-consulta):not(.categoria-incidente) {
+    color: #e2e8f0 !important;
+}
+
 body.dark-mode span:not(.icon):not(.priority-critica):not(.priority-alta):not(.priority-media):not(.priority-baja):not(.estado-abierto):not(.estado-cerrado):not(.estado-en-progreso):not(.categoria-bug):not(.categoria-feature):not(.categoria-consulta):not(.categoria-incidente) {
-    color: #f7fafc !important;
+    color: #e2e8f0 !important;
 }
 
 body.dark-mode strong {
-    color: #e2e8f0 !important;
+    color: #f7fafc !important;
+    font-weight: 600;
 }
 
 body.dark-mode table {
@@ -1285,7 +1299,6 @@ body.dark-mode .alert {
 body.dark-mode .alert-info {
     background: rgba(66, 153, 225, 0.2) !important;
     color: #90cdf4 !important;
-    border-bottom-color: #718096;
 }
 
 body.dark-mode .alert-success {
@@ -1317,6 +1330,72 @@ body.dark-mode textarea:focus {
     color: #f7fafc !important;
 }
 
+/* Elementos específicos que necesitan mejor contraste */
+body.dark-mode .summary-grid div,
+body.dark-mode .summary-item,
+body.dark-mode .summary-label,
+body.dark-mode .summary-number {
+    color: #f7fafc !important;
+}
+
+/* Textos en cajas de información */
+body.dark-mode .box div,
+body.dark-mode .box p,
+body.dark-mode .box span:not(.icon):not(.estado-abierto):not(.estado-cerrado):not(.estado-en-progreso):not(.priority-critica):not(.priority-alta):not(.priority-media):not(.priority-baja):not(.categoria-bug):not(.categoria-feature):not(.categoria-consulta):not(.categoria-incidente) {
+    color: #e2e8f0 !important;
+}
+
+/* Mejorar contraste en elementos de estadísticas */
+body.dark-mode .stat-card {
+    background: rgba(74, 85, 104, 0.95) !important;
+    color: #f7fafc !important;
+}
+
+body.dark-mode .stat-number {
+    background: linear-gradient(135deg, #90cdf4 0%, #63b3ed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.dark-mode .stat-label {
+    color: #cbd5e0 !important;
+}
+
+/* Mejorar visibilidad en elementos de tiempo */
+body.dark-mode .notification-time,
+body.dark-mode .kb-article-meta,
+body.dark-mode small {
+    color: #a0aec0 !important;
+}
+
+/* Asegurar que todos los textos sean visibles */
+body.dark-mode * {
+    color: inherit;
+}
+
+body.dark-mode .box * {
+    color: #e2e8f0;
+}
+
+/* Excepciones para elementos que ya tienen colores específicos */
+body.dark-mode .icon,
+body.dark-mode .priority-critica,
+body.dark-mode .priority-alta,
+body.dark-mode .priority-media,
+body.dark-mode .priority-baja,
+body.dark-mode .estado-abierto,
+body.dark-mode .estado-cerrado,
+body.dark-mode .estado-en-progreso,
+body.dark-mode .categoria-bug,
+body.dark-mode .categoria-feature,
+body.dark-mode .categoria-consulta,
+body.dark-mode .categoria-incidente,
+body.dark-mode button,
+body.dark-mode .card-link,
+body.dark-mode a {
+    color: inherit !important;
+}
 /* Mejorar botón de modo oscuro */
 .dark-mode-toggle {
     position: fixed;
