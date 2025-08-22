@@ -1,6 +1,7 @@
 <?php
-require_once "includes/db.php";
-require_once "includes/funciones.php";
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/funciones.php';
 redirigir_si_no_logueado();
 
 // ⚠️ Función necesaria para obtener el correo del usuario
