@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . "/config.php";
-require_once "includes/db.php";
-require_once "includes/funciones.php";
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/funciones.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = limpiar($_POST["nombre"]);
