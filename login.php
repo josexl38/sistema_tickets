@@ -1,7 +1,7 @@
 <?php
-// No hace falta session_start() aquí, lo hace includes/funciones.php
-require_once "includes/db.php";
-require_once "includes/funciones.php";
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/funciones.php';
 
 $mensaje = "";
 
