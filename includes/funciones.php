@@ -8,12 +8,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
-        'secure'   => false,   // true si tienes HTTPS
+        'secure'   => true,    // HTTPS habilitado
         'httponly' => true,
-        'samesite' => 'Lax',
+        'samesite' => 'Strict',
     ]);
+    
+    // Configuraciones adicionales de seguridad
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_secure', 1);
+    ini_set('session.cookie_samesite', 'Strict');
+    ini_set('session.use_strict_mode', 1);
+    
     session_start();
 }
+
+// Configurar errores para producción
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../logs/php-error.log');
 
 /** ----------------- Helpers generales ----------------- */
 
@@ -104,6 +116,80 @@ function validar_archivo($archivo) {
         return "El archivo es demasiado grande. Máximo: 5MB";
     }
     return true;
+}
+
+/** ----------------- Funciones de Seguridad ----------------- */
+
+function csrf_token() {
+    if (empty($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf'];
+}
+
+function csrf_check($token) {
+    return isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $token);
+}
+
+function validar_dominio_email($email) {
+    return str_ends_with(strtolower($email), DOMINIO_PERMITIDO);
+}
+
+function generar_token_seguro() {
+    return bin2hex(random_bytes(32));
+}
+
+function verificar_rate_limit($pdo, $ip, $max_intentos = 5, $tiempo_bloqueo = 900) {
+    try {
+        // Limpiar intentos antiguos (más de 1 hora)
+        $stmt = $pdo->prepare("DELETE FROM intentos_login WHERE ultimo_intento < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        $stmt->execute();
+        
+        // Verificar si está bloqueado
+        $stmt = $pdo->prepare("SELECT bloqueado_hasta FROM intentos_login WHERE ip_address = ? AND bloqueado_hasta > NOW()");
+        $stmt->execute([$ip]);
+        if ($stmt->fetchColumn()) {
+            return false; // Está bloqueado
+        }
+        
+        // Verificar intentos
+        $stmt = $pdo->prepare("SELECT intentos FROM intentos_login WHERE ip_address = ?");
+        $stmt->execute([$ip]);
+        $intentos = $stmt->fetchColumn();
+        
+        return $intentos < $max_intentos;
+    } catch (Exception $e) {
+        error_log("Error rate limit: " . $e->getMessage());
+        return true; // En caso de error, permitir acceso
+    }
+}
+
+function registrar_intento_login($pdo, $ip, $exitoso = false) {
+    try {
+        if ($exitoso) {
+            // Login exitoso, limpiar intentos
+            $stmt = $pdo->prepare("DELETE FROM intentos_login WHERE ip_address = ?");
+            $stmt->execute([$ip]);
+        } else {
+            // Login fallido, incrementar contador
+            $stmt = $pdo->prepare("
+                INSERT INTO intentos_login (ip_address, intentos, ultimo_intento) 
+                VALUES (?, 1, NOW()) 
+                ON DUPLICATE KEY UPDATE 
+                intentos = intentos + 1, 
+                ultimo_intento = NOW(),
+                bloqueado_hasta = IF(intentos >= 4, DATE_ADD(NOW(), INTERVAL 15 MINUTE), NULL)
+            ");
+            $stmt->execute([$ip]);
+        }
+    } catch (Exception $e) {
+        error_log("Error registrar intento: " . $e->getMessage());
+    }
+}
+
+function limpiar_archivo_nombre($nombre_original) {
+    $extension = strtolower(pathinfo($nombre_original, PATHINFO_EXTENSION));
+    return bin2hex(random_bytes(16)) . '.' . $extension;
 }
 
 function comprimir_imagen($origen, $destino, $calidad = 75) {
