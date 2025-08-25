@@ -3,6 +3,8 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/funciones.php';
 
+$mensaje = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar CSRF token
     if (!csrf_check($_POST["csrf"] ?? '')) {
@@ -40,34 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $mensaje = "Error al registrar el usuario.";
                 }
             }
-        }
-    }
-}
-    $nombre = limpiar($_POST["nombre"]);
-    $correo = limpiar($_POST["correo"]);
-    $contraseña = password_hash($_POST["contraseña"], PASSWORD_DEFAULT);
-    $departamento = limpiar($_POST["departamento"]);
-    $token = bin2hex(random_bytes(16));
-
-    $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE correo = ?");
-    $stmt->execute([$correo]);
-    if ($stmt->rowCount() > 0) {
-        $mensaje = "El correo ya esta registrado.";
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, contraseña, departamento, token_confirmacion) VALUES (?, ?, ?, ?, ?)");
-        if ($stmt->execute([$nombre, $correo, $contraseña, $departamento, $token])) {
-            $enlace = BASE_URL . "confirmar.php?token=$token";
-            $asunto = "Confirmacion de cuenta - Sistema de Tickets";
-            $mensaje_correo = "Hola $nombre,\n\nPara activar tu cuenta, haz clic en el siguiente enlace:\n\n$enlace\n\nSaludos,\nSistema de Soporte VW Potosina";
-            $cabeceras = "From: soporte@vw-potosina.com.mx";
-
-            if (mail($correo, $asunto, $mensaje_correo, $cabeceras)) {
-                $mensaje = "Registro exitoso. Se ha enviado un correo de confirmacion.";
-            } else {
-                $mensaje = "Registro realizado, pero no se pudo enviar el correo.";
-            }
-        } else {
-            $mensaje = "Error al registrar el usuario.";
         }
     }
 }
@@ -112,6 +86,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 20px;
             font-weight: 600;
             border: 1px solid rgba(56, 161, 105, 0.2);
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
         }
     </style>
 </head>
