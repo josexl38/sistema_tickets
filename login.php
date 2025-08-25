@@ -58,29 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 }
-    $correo      = limpiar($_POST["correo"] ?? '');
-    $contrasena  = $_POST["contraseña"] ?? '';
-
-    // Buscar usuario por correo
-    $stmt = $pdo->prepare("SELECT id, nombre, contraseña, confirmado FROM usuarios WHERE correo = ?");
-    $stmt->execute([$correo]);
-    $usuario = $stmt->fetch();
-
-    if ($usuario && password_verify($contrasena, $usuario["contraseña"])) {
-        if (!(int)$usuario["confirmado"]) {
-            $mensaje = "Tu cuenta no ha sido confirmada. Revisa tu correo.";
-        } else {
-            // Seguridad: regenerar ID sesion
-            session_regenerate_id(true);
-            $_SESSION["usuario_id"]     = (int)$usuario["id"];
-            $_SESSION["usuario_nombre"] = $usuario["nombre"];
-            header("Location: dashboard.php");
-            exit();
-        }
-    } else {
-        $mensaje = "Correo o contraseña incorrectos.";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="es" data-page="inicio">
