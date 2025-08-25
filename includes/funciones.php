@@ -20,6 +20,14 @@ if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.use_strict_mode', 1);
     
     session_start();
+    
+    // Regenerar ID de sesión periódicamente para seguridad
+    if (!isset($_SESSION['last_regeneration'])) {
+        $_SESSION['last_regeneration'] = time();
+    } elseif (time() - $_SESSION['last_regeneration'] > 300) { // cada 5 minutos
+        session_regenerate_id(true);
+        $_SESSION['last_regeneration'] = time();
+    }
 }
 
 // Configurar errores para producción
@@ -132,7 +140,8 @@ function csrf_check($token) {
 }
 
 function validar_dominio_email($email) {
-    return str_ends_with(strtolower($email), DOMINIO_PERMITIDO);
+    $email_lower = strtolower(trim($email));
+    return str_ends_with($email_lower, DOMINIO_PERMITIDO);
 }
 
 function generar_token_seguro() {

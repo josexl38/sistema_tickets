@@ -6,6 +6,35 @@ $mensaje = "";
 
 if (isset($_GET["token"])) {
     $token = $_GET["token"];
+    
+    // Verificar que el token existe y no ha expirado
+    $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE token_reset = ? AND token_reset_expira > NOW()");
+    $stmt->execute([$token]);
+    $usuario = $stmt->fetch();
+    
+    if (!$usuario) {
+        $mensaje = "Token invalido o expirado. Solicita un nuevo enlace de recuperacion.";
+    } else {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Verificar CSRF token
+            if (!csrf_check($_POST["csrf"] ?? '')) {
+                $mensaje = "Solicitud invalida. Por favor intenta de nuevo.";
+            } else {
+                $nueva = password_hash($_POST["nueva"], PASSWORD_DEFAULT);
+                
+                // Actualizar contraseña y limpiar tokens (un solo uso)
+                $stmt = $pdo->prepare("UPDATE usuarios SET contraseña = ?, token_reset = NULL, token_reset_expira = NULL WHERE id = ?");
+                if ($stmt->execute([$nueva, $usuario["id"]])) {
+                    $mensaje = "Contraseña actualizada correctamente. <a href='login.php'>Iniciar sesion</a>";
+                } else {
+                    $mensaje = "Error al actualizar la contraseña.";
+                }
+            }
+        }
+    }
+} else {
+    $mensaje = "Token no valido.";
+}
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $nueva = password_hash($_POST["nueva"], PASSWORD_DEFAULT);
@@ -64,6 +93,8 @@ if (isset($_GET["token"])) {
 
             <?php if (isset($_GET["token"]) && empty($mensaje)): ?>
                 <form method="POST">
+                    <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                    
                     <label>Nueva contraseña:</label>
                     <div class="input-group">
                         <input type="password" name="nueva" id="nueva" required>

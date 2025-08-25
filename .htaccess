@@ -1,0 +1,42 @@
+# Seguridad del contenido
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-Content-Type-Options "nosniff"
+Header set Referrer-Policy "same-origin"
+Header always set X-XSS-Protection "1; mode=block"
+
+# CSP básica
+Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; base-uri 'self'; frame-ancestors 'self';"
+
+# HSTS (Strict Transport Security)
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# Redirección del dominio raíz a la aplicación
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /sistema_tickets/ [R=302,L]
+
+# Proteger archivos sensibles
+<Files "*.sql">
+    Require all denied
+</Files>
+
+<Files "*.log">
+    Require all denied
+</Files>
+
+<FilesMatch "\.(env|ini|conf)$">
+    Require all denied
+</FilesMatch>
+
+# Prevenir acceso a directorios
+Options -Indexes
+
+# Proteger includes
+<Directory "includes">
+    Require all denied
+</Directory>
+
+# Proteger logs
+<Directory "logs">
+    Require all denied
+</Directory>

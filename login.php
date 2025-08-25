@@ -6,6 +6,58 @@ require_once __DIR__ . '/includes/funciones.php';
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $ip_cliente = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    
+    // Verificar rate limiting
+    if (!verificar_rate_limit($pdo, $ip_cliente)) {
+        $mensaje = "Demasiados intentos fallidos. Intenta de nuevo en 15 minutos.";
+    } else {
+        // Verificar CSRF token
+        if (!csrf_check($_POST["csrf"] ?? '')) {
+            $mensaje = "Solicitud invalida. Por favor intenta de nuevo.";
+        } else {
+            $correo      = limpiar($_POST["correo"] ?? '');
+            $contrasena  = $_POST["contraseña"] ?? '';
+
+            // Validar dominio de correo
+            if (!validar_dominio_email($correo)) {
+                $mensaje = "Solo se permiten correos del dominio @vw-potosina.com.mx";
+                registrar_intento_login($pdo, $ip_cliente, false);
+            } else {
+                // Buscar usuario por correo
+                $stmt = $pdo->prepare("SELECT id, nombre, contraseña, confirmado FROM usuarios WHERE correo = ?");
+                $stmt->execute([$correo]);
+                $usuario = $stmt->fetch();
+
+                if ($usuario && password_verify($contrasena, $usuario["contraseña"])) {
+                    if (!(int)$usuario["confirmado"]) {
+                        $mensaje = "Tu cuenta no ha sido confirmada. Revisa tu correo.";
+                        registrar_intento_login($pdo, $ip_cliente, false);
+                    } else {
+                        // Login exitoso
+                        registrar_intento_login($pdo, $ip_cliente, true);
+                        
+                        // Seguridad: regenerar ID sesion
+                        session_regenerate_id(true);
+                        $_SESSION["usuario_id"]     = (int)$usuario["id"];
+                        $_SESSION["usuario_nombre"] = $usuario["nombre"];
+                        $_SESSION['last_regeneration'] = time();
+                        
+                        // Actualizar último acceso
+                        $stmt_acceso = $pdo->prepare("UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = ?");
+                        $stmt_acceso->execute([$usuario["id"]]);
+                        
+                        header("Location: dashboard.php");
+                        exit();
+                    }
+                } else {
+                    $mensaje = "Correo o contraseña incorrectos.";
+                    registrar_intento_login($pdo, $ip_cliente, false);
+                }
+            }
+        }
+    }
+}
     $correo      = limpiar($_POST["correo"] ?? '');
     $contrasena  = $_POST["contraseña"] ?? '';
 
@@ -65,6 +117,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?php endif; ?>
 
             <form method="POST" onsubmit="return validarLogin();">
+                <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                
                 <label>Correo:</label>
                 <input type="email" name="correo" id="correo" placeholder="Ingresa tu correo" required>
 

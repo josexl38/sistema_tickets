@@ -6,16 +6,18 @@ $mensaje = "";
 
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
-    $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE token_confirmacion = ?");
+    
+    // Verificar token y que no haya expirado
+    $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE token_confirmacion = ? AND (token_reset_expira IS NULL OR token_reset_expira > NOW())");
     $stmt->execute([$token]);
 
     if ($stmt->rowCount() > 0) {
         $usuario = $stmt->fetch();
-        $stmt = $pdo->prepare("UPDATE usuarios SET confirmado = 1, token_confirmacion = NULL WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE usuarios SET confirmado = 1, token_confirmacion = NULL, token_reset_expira = NULL WHERE id = ?");
         $stmt->execute([$usuario["id"]]);
         $mensaje = "✅ Cuenta confirmada correctamente. <a href='login.php'>Iniciar sesión</a>";
     } else {
-        $mensaje = "❌ Token invalido o ya fue usado.";
+        $mensaje = "Token invalido, expirado o ya fue usado.";
     }
 } else {
     $mensaje = "❌ Token no proporcionado.";

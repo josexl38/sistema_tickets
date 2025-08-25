@@ -12,6 +12,31 @@ function obtenerCorreoUsuario($id, $pdo) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verificar CSRF token
+    if (!csrf_check($_POST["csrf"] ?? '')) {
+        echo "<!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Error</title>
+            <link rel='stylesheet' href='css/estilo.css'>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='box'>
+                    <h2>Error de Seguridad</h2>
+                    <div class='alert alert-error'>
+                        Solicitud invalida. Por favor intenta de nuevo.
+                    </div>
+                    <br>
+                    <a href='crear_ticket.php'>Volver a intentar</a>
+                </div>
+            </div>
+        </body>
+        </html>";
+        exit();
+    }
+    
     $tema = limpiar($_POST["tema"]);
     $titulo = limpiar($_POST["titulo"]);
     $descripcion = limpiar($_POST["descripcion"]);
@@ -182,6 +207,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                
                 <label>Categoría del problema:</label>
                 <select name="categoria" required>
                     <option value="">-- Selecciona el tipo --</option>

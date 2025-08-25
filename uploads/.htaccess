@@ -1,0 +1,17 @@
+# Deshabilitar ejecución de PHP en uploads
+php_flag engine off
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps
+Options -ExecCGI
+
+# Prevenir acceso directo a archivos ejecutables
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# Permitir solo ciertos tipos de archivo
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|txt|zip)$">
+    Require all granted
+</FilesMatch>
+
+# Prevenir listado de directorio
+Options -Indexes

@@ -1,2 +1,34 @@
-node_modules/
-.env
+# Archivos de configuración sensibles
+/includes/db.php
+*.env
+*.env.local
+
+# Archivos de Cloudflare
+/root/.cloudflared/*.json
+/root/.cloudflared/cert.pem
+
+# Uploads y logs
+/uploads/*
+!/uploads/.htaccess
+/logs/*
+!/logs/.gitkeep
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backups de base de datos
+*.sql
+backup_*.sql
+
+# Archivos de sesión
+/tmp/
+/sessions/

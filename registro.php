@@ -4,6 +4,45 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/funciones.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verificar CSRF token
+    if (!csrf_check($_POST["csrf"] ?? '')) {
+        $mensaje = "Solicitud invalida. Por favor intenta de nuevo.";
+    } else {
+        $nombre = limpiar($_POST["nombre"]);
+        $correo = limpiar($_POST["correo"]);
+        
+        // Validar dominio de correo
+        if (!validar_dominio_email($correo)) {
+            $mensaje = "Solo se permiten correos del dominio @vw-potosina.com.mx";
+        } else {
+            $contraseña = password_hash($_POST["contraseña"], PASSWORD_DEFAULT);
+            $departamento = limpiar($_POST["departamento"]);
+            $token = bin2hex(random_bytes(32));
+            $token_expira = date('Y-m-d H:i:s', time() + TOKEN_EXPIRY_TIME);
+
+            $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE correo = ?");
+            $stmt->execute([$correo]);
+            if ($stmt->rowCount() > 0) {
+                $mensaje = "El correo ya esta registrado.";
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, contraseña, departamento, token_confirmacion, token_reset_expira) VALUES (?, ?, ?, ?, ?, ?)");
+                if ($stmt->execute([$nombre, $correo, $contraseña, $departamento, $token, $token_expira])) {
+                    $enlace = BASE_URL . "confirmar.php?token=$token";
+                    $asunto = "Confirmacion de cuenta - Sistema de Tickets";
+                    $mensaje_correo = "Hola $nombre,\n\nPara activar tu cuenta, haz clic en el siguiente enlace:\n\n$enlace\n\nEste enlace expira en 1 hora por seguridad.\n\nSaludos,\nSistema de Soporte VW Potosina";
+                    
+                    if (enviar_notificacion_email($correo, $asunto, $mensaje_correo)) {
+                        $mensaje = "Registro exitoso. Se ha enviado un correo de confirmacion que expira en 1 hora.";
+                    } else {
+                        $mensaje = "Registro realizado, pero no se pudo enviar el correo.";
+                    }
+                } else {
+                    $mensaje = "Error al registrar el usuario.";
+                }
+            }
+        }
+    }
+}
     $nombre = limpiar($_POST["nombre"]);
     $correo = limpiar($_POST["correo"]);
     $contraseña = password_hash($_POST["contraseña"], PASSWORD_DEFAULT);
@@ -89,6 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
 
             <form method="POST" onsubmit="return validarFormulario();">
+                <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                
                 <label>Nombre completo:</label>
                 <input type="text" name="nombre" placeholder="Ingresa tu nombre completo" required>
 
