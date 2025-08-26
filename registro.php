@@ -33,13 +33,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $asunto = "Confirmacion de cuenta - Sistema de Tickets";
                     $mensaje_correo = "Hola $nombre,\n\nPara activar tu cuenta, haz clic en el siguiente enlace:\n\n$enlace\n\nEste enlace expira en 1 hora por seguridad.\n\nSaludos,\nSistema de Soporte VW Potosina";
                     
-                    if (enviar_notificacion_email($correo, $asunto, $mensaje_correo)) {
+                    // CAMBIO: Usar mail() directamente como en crear_ticket.php que funciona
+                    $cabeceras = "From: soporte@vw-potosina.com.mx\r\n";
+                    $cabeceras .= "Reply-To: soporte@vw-potosina.com.mx\r\n";
+                    $cabeceras .= "Content-Type: text/plain; charset=UTF-8\r\n";
+                    
+                    if (@mail($correo, $asunto, $mensaje_correo, $cabeceras)) {
                         $mensaje = "Registro exitoso. Se ha enviado un correo de confirmacion que expira en 1 hora.";
+                        
+                        // Log para debugging
+                        error_log("Correo de registro enviado a: $correo con token: $token");
                     } else {
                         $mensaje = "Registro realizado, pero no se pudo enviar el correo.";
+                        error_log("Error enviando correo de registro a: $correo");
                     }
                 } else {
                     $mensaje = "Error al registrar el usuario.";
+                    error_log("Error al insertar usuario: " . print_r($stmt->errorInfo(), true));
                 }
             }
         }
@@ -88,6 +98,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 1px solid rgba(56, 161, 105, 0.2);
         }
 
+        .error-message {
+            background: rgba(229, 62, 62, 0.1);
+            color: #c53030;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #e53e3e;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 1px solid rgba(229, 62, 62, 0.2);
+        }
+
         .input-group {
             position: relative;
             width: 100%;
@@ -119,7 +140,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <?php if (isset($mensaje)): ?>
-                <div class="success-message"><?php echo $mensaje; ?></div>
+                <?php if (strpos($mensaje, 'exitoso') !== false): ?>
+                    <div class="success-message">
+                        <?php echo $mensaje; ?>
+                        <br><br>
+                        <small><strong>💡 Revisa tu bandeja de entrada y spam.</strong> El correo puede tardar unos minutos en llegar.</small>
+                    </div>
+                <?php else: ?>
+                    <div class="error-message"><?php echo $mensaje; ?></div>
+                <?php endif; ?>
             <?php endif; ?>
 
             <form method="POST" onsubmit="return validarFormulario();">
@@ -129,17 +158,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="text" name="nombre" placeholder="Ingresa tu nombre completo" required>
 
                 <label>Correo:</label>
-                <input type="email" name="correo" id="correo" placeholder="Ingresa tu correo electrónico" required>
+                <input type="email" name="correo" id="correo" placeholder="ejemplo@vw-potosina.com.mx" required>
 
                 <label>Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" name="contraseña" id="contraseña" placeholder="Crea una contraseña segura" required>
+                    <input type="password" name="contraseña" id="contraseña" placeholder="Crea una contraseña segura" required minlength="6">
                     <span class="toggle-password" onclick="mostrarContrasena(this)">👁️</span>
                 </div>
 
                 <label>Repetir contraseña:</label>
                 <div class="input-group">
-                    <input type="password" id="repetir" placeholder="Repite la contraseña anterior" required>
+                    <input type="password" id="repetir" placeholder="Repite la contraseña anterior" required minlength="6">
                     <span class="toggle-password" onclick="mostrarRepetir(this)">👁️</span>
                 </div>
 
@@ -183,10 +212,16 @@ function validarFormulario() {
     const pass1 = document.getElementById("contraseña").value;
     const pass2 = document.getElementById("repetir").value;
 
-    if (!email.includes("@")) {
-        alert("El correo debe contener '@'.");
+    if (!email.includes("@vw-potosina.com.mx")) {
+        alert("Solo se permiten correos del dominio @vw-potosina.com.mx");
         return false;
     }
+    
+    if (pass1.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres.");
+        return false;
+    }
+    
     if (pass1 !== pass2) {
         alert("Las contraseñas no coinciden.");
         return false;
