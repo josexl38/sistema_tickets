@@ -97,13 +97,20 @@ function tiempo_transcurrido($fecha) {
 }
 
 function enviar_notificacion_email($destinatario, $asunto, $mensaje, $remitente = "soporte@vw-potosina.com.mx") {
-    // Limpiar caracteres especiales para evitar problemas de codificacion
-    $asunto_limpio = str_replace(['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ'], ['a','e','i','o','u','n','A','E','I','O','U','N'], $asunto);
-    $mensaje_limpio = str_replace(['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ'], ['a','e','i','o','u','n','A','E','I','O','U','N'], $mensaje);
+    // Limpiar caracteres especiales para evitar problemas de codificacion (igual que en crear_ticket.php)
+    $asunto_limpio = str_replace(
+        ['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ','ü','Ü'], 
+        ['a','e','i','o','u','n','A','E','I','O','U','N','u','U'], 
+        $asunto
+    );
+    $mensaje_limpio = str_replace(
+        ['á','é','í','ó','ú','ñ','Á','É','Í','Ó','Ú','Ñ','ü','Ü'], 
+        ['a','e','i','o','u','n','A','E','I','O','U','N','u','U'], 
+        $mensaje
+    );
     
-    $cabeceras  = "From: $remitente\r\n";
-    $cabeceras .= "Reply-To: $remitente\r\n";
-    $cabeceras .= "Content-Type: text/plain; charset=ISO-8859-1\r\n";
+    // Usar exactamente el mismo formato que funciona en crear_ticket.php
+    $cabeceras = "From: $remitente";
     return @mail($destinatario, $asunto_limpio, $mensaje_limpio, $cabeceras);
 }
 

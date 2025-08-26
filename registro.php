@@ -29,22 +29,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, correo, contraseña, departamento, token_confirmacion, token_reset_expira) VALUES (?, ?, ?, ?, ?, ?)");
                 if ($stmt->execute([$nombre, $correo, $contraseña, $departamento, $token, $token_expira])) {
+                    // Usar el mismo formato que funciona en crear_ticket.php
                     $enlace = BASE_URL . "confirmar.php?token=$token";
                     $asunto = "Confirmacion de cuenta - Sistema de Tickets";
-                    $mensaje_correo = "Hola $nombre,\n\nPara activar tu cuenta, haz clic en el siguiente enlace:\n\n$enlace\n\nEste enlace expira en 1 hora por seguridad.\n\nSaludos,\nSistema de Soporte VW Potosina";
+                    $mensaje_correo = "Hola $nombre,\n\n"
+                                    . "Para activar tu cuenta, haz clic en el siguiente enlace:\n\n"
+                                    . "$enlace\n\n"
+                                    . "Este enlace expira en 1 hora por seguridad.\n\n"
+                                    . "Si no solicitaste esta cuenta, ignora este correo.\n\n"
+                                    . "Saludos,\n"
+                                    . "Sistema de Soporte VW Potosina";
                     
-                    // CAMBIO: Usar mail() directamente como en crear_ticket.php que funciona
-                    $cabeceras = "From: soporte@vw-potosina.com.mx\r\n";
-                    $cabeceras .= "Reply-To: soporte@vw-potosina.com.mx\r\n";
-                    $cabeceras .= "Content-Type: text/plain; charset=UTF-8\r\n";
+                    // Usar exactamente el mismo formato que funciona en crear_ticket.php
+                    $cabeceras = "From: soporte@vw-potosina.com.mx";
                     
                     if (@mail($correo, $asunto, $mensaje_correo, $cabeceras)) {
-                        $mensaje = "Registro exitoso. Se ha enviado un correo de confirmacion que expira en 1 hora.";
+                        $mensaje = "Registro exitoso. Se ha enviado un correo de confirmacion (valido por 1 hora).";
                         
                         // Log para debugging
                         error_log("Correo de registro enviado a: $correo con token: $token");
                     } else {
-                        $mensaje = "Registro realizado, pero no se pudo enviar el correo.";
+                        $mensaje = "Registro realizado, pero no se pudo enviar el correo de confirmacion.";
                         error_log("Error enviando correo de registro a: $correo");
                     }
                 } else {

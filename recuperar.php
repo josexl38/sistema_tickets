@@ -28,9 +28,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($stmt->execute([$token, $token_expira, $correo])) {
                     $enlace = BASE_URL . "reestablecer.php?token=$token";
                     $asunto = "Recuperacion de contrasena";
-                    $mensaje_correo = "Has solicitado recuperar tu contrasena.\n\nHaz clic en el siguiente enlace para crear una nueva:\n\n$enlace\n\nEste enlace expira en 1 hora por seguridad.\n\nSi no solicitaste este cambio, ignora este correo.";
+                    $mensaje_correo = "Has solicitado recuperar tu contrasena.\n\n"
+                                    . "Haz clic en el siguiente enlace para crear una nueva:\n\n"
+                                    . "$enlace\n\n"
+                                    . "Este enlace expira en 1 hora por seguridad.\n\n"
+                                    . "Si no solicitaste este cambio, ignora este correo.";
                     
-                    if (enviar_notificacion_email($correo, $asunto, $mensaje_correo)) {
+                    // Usar el mismo formato directo que funciona
+                    $cabeceras = "From: soporte@vw-potosina.com.mx";
+                    if (@mail($correo, $asunto, $mensaje_correo, $cabeceras)) {
                         $mensaje = "Se ha enviado un correo con el enlace para recuperar tu contrasena (valido por 1 hora).";
                     } else {
                         $mensaje = "No se pudo enviar el correo.";
