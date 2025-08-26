@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/funciones.php';
 
 $mensaje = "";
 
@@ -44,25 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-    $correo = trim($_POST["correo"]);
-    $token = bin2hex(random_bytes(16));
-
-    $stmt = $pdo->prepare("UPDATE usuarios SET token_confirmacion = ? WHERE correo = ?");
-    if ($stmt->execute([$token, $correo])) {
-        $enlace = BASE_URL . "reestablecer.php?token=$token";
-        $asunto = "Recuperacion de contrasena";
-        $mensaje_correo = "Has solicitado recuperar tu contrasena.\n\nHaz clic en el siguiente enlace para crear una nueva:\n\n$enlace";
-        $cabeceras = "From: soporte@vw-potosina.com.mx";
-
-        if (mail($correo, $asunto, $mensaje_correo, $cabeceras)) {
-            $mensaje = "✅ Se ha enviado un correo con el enlace para recuperar tu contrasena.";
-        } else {
-            $mensaje = "❌ No se pudo enviar el correo.";
-        }
-    } else {
-        $mensaje = "❌ Correo no encontrado o error al generar enlace.";
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -77,6 +59,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: bold;
             color: #003366;
         }
+        .success-message {
+            background: rgba(56, 161, 105, 0.1);
+            color: #2f855a;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #38a169;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 1px solid rgba(56, 161, 105, 0.2);
+        }
+        .error-message {
+            background: rgba(229, 62, 62, 0.1);
+            color: #c53030;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #e53e3e;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border: 1px solid rgba(229, 62, 62, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -85,19 +87,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2>Recuperar contraseña</h2>
 
             <?php if (!empty($mensaje)): ?>
-                <p class="mensaje"><?php echo $mensaje; ?></p>
+                <?php if (strpos($mensaje, 'enviado') !== false): ?>
+                    <div class="success-message"><?php echo $mensaje; ?></div>
+                <?php else: ?>
+                    <div class="error-message"><?php echo $mensaje; ?></div>
+                <?php endif; ?>
             <?php endif; ?>
 
             <form method="POST" onsubmit="return validarCorreo();">
                 <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
                 
                 <label>Ingrese su correo:</label>
-                <input type="email" name="correo" id="correo" required>
+                <input type="email" name="correo" id="correo" placeholder="ejemplo@vw-potosina.com.mx" required>
 
                 <button type="submit">Enviar enlace</button>
             </form>
 
-            <br><a href="login.php">Volver</a>
+            <br>
+            <div style="text-align: center;">
+                <a href="login.php">← Volver al login</a>
+                <span> | </span>
+                <a href="index.php">🏠 Inicio</a>
+            </div>
         </div>
     </div>
 
@@ -106,6 +117,10 @@ function validarCorreo() {
     const correo = document.getElementById("correo").value;
     if (!correo.includes("@")) {
         alert("El correo debe contener '@'.");
+        return false;
+    }
+    if (!correo.includes("@vw-potosina.com.mx")) {
+        alert("Solo se permiten correos del dominio @vw-potosina.com.mx");
         return false;
     }
     return true;
