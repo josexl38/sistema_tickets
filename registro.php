@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Validar dominio de correo
         if (!validar_dominio_email($correo)) {
-            $mensaje = "Solo se permiten correos de los dominios autorizados";
+            $mensaje = "Solo se permiten correos de los dominios autorizados: " . implode(', ', DOMINIOS_PERMITIDOS);
         } else {
             $contraseña = password_hash($_POST["contraseña"], PASSWORD_DEFAULT);
             $departamento = limpiar($_POST["departamento"]);
