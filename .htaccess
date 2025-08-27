@@ -1,3 +1,21 @@
+# --- BLOQUEO DURO .git, dotfiles y configs ---
+# 404 para cualquier intento a /.git
+RedirectMatch 404 ^/.*/?\.git(/|$)
+
+# Bloquear cualquier archivo que empiece con punto (.env, .gitignore, .htaccess, etc.)
+<FilesMatch "^\..*">
+    Require all denied
+</FilesMatch>
+
+# Bloquear archivos de configuración / secretos
+<FilesMatch "(?i)\.(env|ini|conf|yml|yaml|json|lock|sql|bak|tmp)$">
+    Require all denied
+</FilesMatch>
+
+# Evitar coincidencias raras por MultiViews y quitar listados
+Options -Indexes -MultiViews
+
+
 # Seguridad del contenido
 Header set X-Frame-Options "SAMEORIGIN"
 Header set X-Content-Type-Options "nosniff"
