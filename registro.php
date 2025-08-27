@@ -186,6 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="Seminuevos">Seminuevos</option>
                     <option value="Ventas VW">Ventas VW</option>
                     <option value="Ventas Seat">Ventas Seat</option>
+                    <option value="Ventas Digitales">Ventas Digitales</option>
                     <option value="Refacciones">Refacciones</option>
                     <option value="Marketing">Marketing</option>
                 </select>
