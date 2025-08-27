@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Validar dominio de correo
         if (!validar_dominio_email($correo)) {
-            $mensaje = "Solo se permiten correos del dominio @vw-potosina.com.mx";
+            $mensaje = "Solo se permiten correos de los dominios autorizados ;
         } else {
             $token = bin2hex(random_bytes(32));
             $token_expira = date('Y-m-d H:i:s', time() + TOKEN_EXPIRY_TIME);
