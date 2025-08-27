@@ -212,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label>Categoría del problema:</label>
                 <select name="categoria" required>
                     <option value="">-- Selecciona el tipo --</option>
-                    <option value="Bug">🐛 Bug/Error del sistema</option>
+                    <option value="Bug">🐛 Error del sistema</option>
                     <option value="Feature Request">✨ Solicitud de nueva función</option>
                     <option value="Consulta">❓ Consulta/Pregunta</option>
                     <option value="Incidente">⚠️ Incidente/Problema urgente</option>
@@ -232,9 +232,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="">-- Selecciona --</option>
                     <option value="Total Dealer">Total Dealer</option>
                     <option value="Software">Software</option>
-                    <option value="Hardware">Hardware</option>
+                    <option value="Computadora">Computadora</option>
                     <option value="Telefonia">Telefonia</option>
-                    <option value="Salesforce">Salesforce</option>
+                    <option value="Salesforce">Sales force</option>
                     <option value="Otros">Otros</option>
                 </select>
 
