@@ -216,9 +216,24 @@ function validarFormulario() {
     const email = document.getElementById("correo").value;
     const pass1 = document.getElementById("contraseña").value;
     const pass2 = document.getElementById("repetir").value;
-
-    if (!email.includes("@vw-potosina.com.mx")) {
-        alert("Solo se permiten correos del dominio @vw-potosina.com.mx");
+    
+    const dominiosPermitidos = [
+        '@vw-potosina.com.mx',
+        '@seat-potosina.com.mx', 
+        '@cupragarage-sanluis.com.mx',
+        '@abellauto.com.mx'
+    ];
+    
+    let dominioValido = false;
+    for (let dominio of dominiosPermitidos) {
+        if (email.includes(dominio)) {
+            dominioValido = true;
+            break;
+        }
+    }
+    
+    if (!dominioValido) {
+        alert("Solo se permiten correos de los dominios autorizados:\n• @vw-potosina.com.mx\n• @seat-potosina.com.mx\n• @cupragarage-sanluis.com.mx\n• @abellauto.com.mx");
         return false;
     }
     
