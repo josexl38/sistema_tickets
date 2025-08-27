@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             // Validar dominio de correo
             if (!validar_dominio_email($correo)) {
-                $mensaje = "Solo se permiten correos del dominio @vw-potosina.com.mx";
+                $mensaje = "Solo se permiten correos de los dominios autorizados";
                 registrar_intento_login($pdo, $ip_cliente, false);
             } else {
                 // Buscar usuario por correo
