@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 if ($usuario && password_verify($contrasena, $usuario["contraseña"])) {
                     if (!(int)$usuario["confirmado"]) {
-                        $mensaje = "Tu cuenta no ha sido confirmada. Revisa tu correo.";
+                        $mensaje = "Tu cuenta no ha sido confirmada. <a href='reenviar_confirmacion.php'>Reenviar correo de confirmacion</a>";
                         registrar_intento_login($pdo, $ip_cliente, false);
                     } else {
                         // Login exitoso
