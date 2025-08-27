@@ -5,8 +5,13 @@ if (!defined('BASE_URL')) {
 }
 
 // Dominio permitido para registro
-if (!defined('DOMINIO_PERMITIDO')) {
-    define('DOMINIO_PERMITIDO', '@vw-potosina.com.mx');
+if (!defined('DOMINIOS_PERMITIDOS')) {
+    define('DOMINIOS_PERMITIDOS', [
+        '@vw-potosina.com.mx',
+        '@seat-potosina.com.mx', 
+        '@cupragarage-sanluis.com.mx',
+        '@abellauto.com.mx'
+    ]);
 }
 
 // Email del administrador
