@@ -148,7 +148,12 @@ function csrf_check($token) {
 
 function validar_dominio_email($email) {
     $email_lower = strtolower(trim($email));
-    return str_ends_with($email_lower, DOMINIO_PERMITIDO);
+    foreach (DOMINIOS_PERMITIDOS as $dominio) {
+        if (str_ends_with($email_lower, $dominio)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function generar_token_seguro() {
