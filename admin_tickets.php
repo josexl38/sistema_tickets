@@ -260,21 +260,26 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
                                 <br><small style="color: #4a5568;"><?php echo tiempo_transcurrido($t["fecha_creacion"]); ?></small>
                             </td>
                             <td>
-                                <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" 
-                                    style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); color: white; border-radius: 8px; text-decoration: none; font-size: 0.9em; margin-right: 8px;">
-                                    <span class="icon">visibility</span>
-                                    Ver
-                                </a>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">
-                                    <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
-                                    <input type="hidden" name="eliminar" value="<?php echo $t['id']; ?>">
-                                    <button type="submit" class="eliminar"
-                                        style="background:none; border:none; padding:8px 16px; color:#e53e3e; cursor:pointer; border-radius:4px; transition: all 0.2s;"
-                                        onmouseover="this.style.backgroundColor='rgba(229,62,62,0.1)'"
-                                        onmouseout="this.style.backgroundColor='transparent'">
-                                    🗑️ Eliminar                                                        
-                                </form>
-                            </td>
+                                <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" 
+                                        style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); color: white; border-radius: 8px; text-decoration: none; font-size: 0.85em; font-weight: 500; min-width: 80px; justify-content: center;">
+                                         <span class="icon">visibility</span>
+                                         Ver
+                                    </a>
+
+                                    <form method="POST" style="display: inline; background: none; padding: 0; box-shadow: none; border: none; margin: 0;" 
+                                          onsubmit="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">
+                                        <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                                        <input type="hidden" name="eliminar" value="<?php echo $t['id']; ?>">
+                                        <button type="submit"
+                                                style="display: inline-flex; align-items: center; gap: 6px; background: none; border: none; padding: 8px 16px; color: #e53e3e; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-size: 0.85em; font-weight: 500; min-width: 80px; justify-content: center;"
+                                                onmouseover="this.style.backgroundColor='rgba(229,62,62,0.1)'; this.style.color='#c53030';"
+                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#e53e3e';">
+                                           🗑️ Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td> 
                         </tr>
                     <?php endforeach; ?>
                 </table>
