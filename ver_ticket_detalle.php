@@ -29,6 +29,11 @@ if (!$ticket) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!csrf_check($_POST["csrf"] ?? '')) {
+        echo "Token CSRF inválido.";
+        exit();
+    }
+
     $respuesta = limpiar($_POST["respuesta"]);
     $autor = $_SESSION["usuario_nombre"];
 
@@ -117,6 +122,7 @@ $respuestas = $stmt->fetchAll();
             <hr>
             <h3>Agregar respuesta</h3>
             <form method="POST">
+                <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
                 <textarea name="respuesta" rows="4" required></textarea><br>
                 <button type="submit">Enviar</button>
             </form>
