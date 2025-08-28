@@ -260,7 +260,11 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
                                 <br><small style="color: #4a5568;"><?php echo tiempo_transcurrido($t["fecha_creacion"]); ?></small>
                             </td>
                             <td>
+
+                                <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" style="padding: 4px 8px; font-size: 0.8em;">Ver</a> |
+
                                 <a href="admin_ver_ticket.php?id=<?php echo $t["id"]; ?>">Ver</a> |
+
                                 <form method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">
                                     <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
                                     <input type="hidden" name="eliminar" value="<?php echo $t['id']; ?>">
