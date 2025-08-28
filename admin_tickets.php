@@ -12,36 +12,41 @@ if (!es_admin($pdo)) {
 // Ejecutar escalamiento automático
 escalamiento_automatico($pdo);
 
-// Si se recibe un ID para borrar
-if (isset($_GET["eliminar"])) {
-    $id = intval($_GET["eliminar"]);
-
-    // Borrar respuestas primero
-    $pdo->prepare("DELETE FROM respuestas WHERE id_ticket = ?")->execute([$id]);
-    // Luego el ticket
-    $pdo->prepare("DELETE FROM tickets WHERE id = ?")->execute([$id]);
-
-    header("Location: admin_tickets.php");
-    exit();
-}
-
-// Manejar asignación de técnico
-if (isset($_POST['asignar_tecnico'])) {
-    $ticket_id = intval($_POST['ticket_id']);
-    $stmt = $pdo->prepare("UPDATE tickets SET tecnico_asignado = 1, estado = 'En Progreso' WHERE id = ?");
-    $stmt->execute([$ticket_id]);
-    
-    // Crear notificación
-    $stmt_user = $pdo->prepare("SELECT id_usuario FROM tickets WHERE id = ?");
-    $stmt_user->execute([$ticket_id]);
-    $user_id = $stmt_user->fetchColumn();
-    
-    if ($user_id) {
-        crear_notificacion($pdo, $user_id, "Ticket asignado", "Tu ticket ha sido asignado a un técnico especializado", "info");
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!csrf_check($_POST["csrf"] ?? '')) {
+        echo "Token CSRF inválido.";
+        exit();
     }
-    
-    header("Location: admin_tickets.php");
-    exit();
+
+    if (isset($_POST["eliminar"])) {
+        $id = intval($_POST["eliminar"]);
+
+        // Borrar respuestas primero
+        $pdo->prepare("DELETE FROM respuestas WHERE id_ticket = ?")->execute([$id]);
+        // Luego el ticket
+        $pdo->prepare("DELETE FROM tickets WHERE id = ?")->execute([$id]);
+
+        header("Location: admin_tickets.php");
+        exit();
+    }
+
+    if (isset($_POST['asignar_tecnico'])) {
+        $ticket_id = intval($_POST['ticket_id']);
+        $stmt = $pdo->prepare("UPDATE tickets SET tecnico_asignado = 1, estado = 'En Progreso' WHERE id = ?");
+        $stmt->execute([$ticket_id]);
+
+        // Crear notificación
+        $stmt_user = $pdo->prepare("SELECT id_usuario FROM tickets WHERE id = ?");
+        $stmt_user->execute([$ticket_id]);
+        $user_id = $stmt_user->fetchColumn();
+
+        if ($user_id) {
+            crear_notificacion($pdo, $user_id, "Ticket asignado", "Tu ticket ha sido asignado a un técnico especializado", "info");
+        }
+
+        header("Location: admin_tickets.php");
+        exit();
+    }
 }
 
 // Filtros para admin
@@ -242,6 +247,7 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
                                     <span style="color: #38a169; font-weight: 600;">✓ Asignado</span>
                                 <?php else: ?>
                                     <form method="POST" style="display: inline; background: none; padding: 0; box-shadow: none; border: none;">
+                                        <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
                                         <input type="hidden" name="ticket_id" value="<?php echo $t['id']; ?>">
                                         <button type="submit" name="asignar_tecnico" style="padding: 4px 8px; font-size: 0.8em; margin: 0;">
                                             Asignar
@@ -254,8 +260,12 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
                                 <br><small style="color: #4a5568;"><?php echo tiempo_transcurrido($t["fecha_creacion"]); ?></small>
                             </td>
                             <td>
-                                <a href="admin_ver_ticket.php?id=<?php echo $t["id"]; ?>">Ver</a> |
-                                <a href="admin_tickets.php?eliminar=<?php echo $t["id"]; ?>" class="eliminar" onclick="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">Eliminar</a>
+                                <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" style="padding: 4px 8px; font-size: 0.8em;">Ver</a> |
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">
+                                    <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                                    <input type="hidden" name="eliminar" value="<?php echo $t['id']; ?>">
+                                    <button type="submit" class="eliminar" style="background:none;border:none;padding:0;">Eliminar</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
