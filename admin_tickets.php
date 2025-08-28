@@ -263,7 +263,11 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
 
                                 <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" style="padding: 4px 8px; font-size: 0.8em;">Ver</a> |
 
+
+                                <a href="admin_ver_ticket.php?id=<?php echo $t['id']; ?>" style="padding: 4px 8px; font-size: 0.8em;">Ver</a> |
+
                                 <a href="admin_ver_ticket.php?id=<?php echo $t["id"]; ?>">Ver</a> |
+
 
                                 <form method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas eliminar este ticket y sus respuestas?')">
                                     <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
