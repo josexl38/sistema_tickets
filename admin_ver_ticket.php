@@ -20,6 +20,11 @@ if (!$ticket) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!csrf_check($_POST["csrf"] ?? '')) {
+        echo "Token CSRF inválido.";
+        exit();
+    }
+
     if (isset($_POST["respuesta"])) {
         $respuesta = limpiar($_POST["respuesta"]);
         $autor = "Soporte VW";
@@ -181,16 +186,17 @@ $plantillas = obtener_plantillas_respuestas($pdo);
             <!-- Acciones administrativas -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
                 <div style="background: rgba(255, 255, 255, 0.95); padding: 16px; border-radius: 12px; border-left: 4px solid #4299e1;">
-                    <h4>🔄 Cambiar Estado</h4>
-                    <form method="POST" style="background: none; padding: 0; box-shadow: none; border: none;">
-                        <select name="nuevo_estado" style="margin-bottom: 8px;">
-                            <option value="Abierto" <?php echo $ticket["estado"] === 'Abierto' ? 'selected' : ''; ?>>Abierto</option>
-                            <option value="En Progreso" <?php echo $ticket["estado"] === 'En Progreso' ? 'selected' : ''; ?>>En Progreso</option>
-                            <option value="Cerrado" <?php echo $ticket["estado"] === 'Cerrado' ? 'selected' : ''; ?>>Cerrado</option>
-                        </select>
-                        <button type="submit" name="cambiar_estado" style="width: 100%; margin: 0;">Actualizar Estado</button>
-                    </form>
-                </div>
+            <h4>🔄 Cambiar Estado</h4>
+            <form method="POST" style="background: none; padding: 0; box-shadow: none; border: none;">
+                <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+                <select name="nuevo_estado" style="margin-bottom: 8px;">
+                    <option value="Abierto" <?php echo $ticket["estado"] === 'Abierto' ? 'selected' : ''; ?>>Abierto</option>
+                    <option value="En Progreso" <?php echo $ticket["estado"] === 'En Progreso' ? 'selected' : ''; ?>>En Progreso</option>
+                    <option value="Cerrado" <?php echo $ticket["estado"] === 'Cerrado' ? 'selected' : ''; ?>>Cerrado</option>
+                </select>
+                <button type="submit" name="cambiar_estado" style="width: 100%; margin: 0;">Actualizar Estado</button>
+            </form>
+        </div>
                 
                 <div style="background: rgba(255, 255, 255, 0.95); padding: 16px; border-radius: 12px; border-left: 4px solid #38a169;">
                     <h4>⏱️ Información de Tiempo</h4>
@@ -201,11 +207,12 @@ $plantillas = obtener_plantillas_respuestas($pdo);
                 </div>
             </div>
             
-            <h3>💬 Responder como soporte</h3>
-            <form method="POST">
-                <?php if (!empty($plantillas)): ?>
-                <label>Plantilla de respuesta (opcional):</label>
-                <select name="plantilla_id" onchange="cargarPlantilla(this.value)" style="margin-bottom: 16px;">
+        <h3>💬 Responder como soporte</h3>
+        <form method="POST">
+            <input type="hidden" name="csrf" value="<?php echo csrf_token(); ?>">
+            <?php if (!empty($plantillas)): ?>
+            <label>Plantilla de respuesta (opcional):</label>
+            <select name="plantilla_id" onchange="cargarPlantilla(this.value)" style="margin-bottom: 16px;">
                     <option value="">-- Seleccionar plantilla --</option>
                     <?php foreach ($plantillas as $plantilla): ?>
                         <option value="<?php echo $plantilla['id']; ?>" data-contenido="<?php echo htmlspecialchars($plantilla['contenido']); ?>">
