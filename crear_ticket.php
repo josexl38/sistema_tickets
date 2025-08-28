@@ -51,15 +51,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Manejar múltiples archivos
     if (!empty($_FILES["archivo"]["name"][0])) {
         $archivos_subidos = [];
+        $errores_archivos = [];
         foreach ($_FILES["archivo"]["name"] as $key => $nombre_original) {
             if (!empty($nombre_original)) {
-                $nombre_archivo = basename($nombre_original);
-                $ruta_archivo = "uploads/" . time() . "_" . $nombre_archivo;
+                 $archivo_info = [
+                    'name' => $nombre_original,
+                    'size' => $_FILES["archivo"]["size"][$key] ?? 0
+                ];
+                $validacion = validar_archivo($archivo_info);
+                if ($validacion !== true) {
+                    $errores_archivos[] = $nombre_original . ': ' . $validacion;
+                    continue;
+                }
+
+                $nombre_archivo = limpiar_archivo_nombre($nombre_original);
+                $ruta_archivo = "uploads/" . $nombre_archivo;
                 if (move_uploaded_file($_FILES["archivo"]["tmp_name"][$key], $ruta_archivo)) {
+                    $extension = strtolower(pathinfo($nombre_archivo, PATHINFO_EXTENSION));
+                    if (in_array($extension, ['jpg','jpeg','png','gif'])) {
+                        @comprimir_imagen($ruta_archivo, $ruta_archivo);
+                    }
                     $archivos_subidos[] = $ruta_archivo;
+                } else {
+                    $errores_archivos[] = "Error al subir el archivo: $nombre_original";
                 }
             }
         }
+
+        if (!empty($errores_archivos)) {
+            echo "<!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <title>Error</title>
+                <link rel='stylesheet' href='css/estilo.css'>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='box'>
+                        <h2>❌ Error al subir archivos</h2>
+                        <div class='alert alert-error'>" .
+                        implode('<br>', array_map('limpiar', $errores_archivos)) .
+                        "</div>
+                        <br>
+                        <a href='crear_ticket.php'>Volver a intentar</a>
+                    </div>
+                </div>
+            </body>
+            </html>";
+            exit();
+        }
+
         if (!empty($archivos_subidos)) {
             $archivo = implode(",", $archivos_subidos);
         }
