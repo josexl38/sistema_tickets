@@ -46,7 +46,7 @@ if ($total_tickets > 0) {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="reportes">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -100,7 +100,7 @@ if ($total_tickets > 0) {
         }
     </style>
 </head>
-<body>
+<body data-page="reportes">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro"></button>
     
     <div class="container" style="max-width: 100%;">
