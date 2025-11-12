@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="login">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Reenviar confirmación</title>
@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
 </head>
-<body>
+<body data-page="login">
     <div class="container">
         <div class="box">
             <h2>📧 Reenviar confirmación de cuenta</h2>
