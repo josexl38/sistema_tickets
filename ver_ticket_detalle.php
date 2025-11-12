@@ -66,7 +66,7 @@ $respuestas = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="ver-ticket-detalle">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Detalle del ticket</title>
@@ -88,7 +88,7 @@ $respuestas = $stmt->fetchAll();
         }
     </style>
 </head>
-<body>
+<body data-page="ver-ticket-detalle">
     <div class="container">
         <div class="box">
             <h2>Ticket #<?php echo $ticket["id"]; ?> - <?php echo $ticket["titulo"]; ?></h2>
