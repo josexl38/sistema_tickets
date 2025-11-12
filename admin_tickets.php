@@ -91,7 +91,7 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="admin-tickets">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administrador</title>
@@ -117,7 +117,7 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
         }
     </style>
 </head>
-<body>
+<body data-page="admin-tickets">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
         <span class="toggle-icon">🌙</span>
     </button>
