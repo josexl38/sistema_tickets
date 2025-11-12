@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es" data-page="login">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .toggle-password { position: absolute; right: 10px; top: 8px; cursor: pointer; font-size: 18px; user-select: none; }
     </style>
 </head>
-<body>
+<body data-page="login">
     <div class="container">
         <div class="box">
             <div class="login-header">
