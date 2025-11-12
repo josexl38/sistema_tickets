@@ -43,7 +43,7 @@ $tickets = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="ver-ticket">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,7 +71,7 @@ $tickets = $stmt->fetchAll();
         }
     </style>
 </head>
-<body>
+<body data-page="ver-ticket">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro"></button>
     
     <div class="container" style="max-width: 100%;">
