@@ -95,7 +95,7 @@ $plantillas = obtener_plantillas_respuestas($pdo);
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="admin-ver-ticket">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Ticket #<?php echo $ticket["id"]; ?></title>
@@ -124,7 +124,7 @@ $plantillas = obtener_plantillas_respuestas($pdo);
         }
     </style>
 </head>
-<body>
+<body data-page="admin-ver-ticket">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
         <span class="toggle-icon">🌙</span>
     </button>
