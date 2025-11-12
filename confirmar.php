@@ -25,13 +25,13 @@ if (isset($_GET['token'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="login">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Confirmar cuenta</title>
     <link rel="stylesheet" href="css/estilo.css">
 </head>
-<body>
+<body  data-page="login">
     <div class="container">
         <div class="box">
             <h2>Confirmación de cuenta</h2>
