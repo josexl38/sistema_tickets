@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es" data-page="login">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Recuperar contraseña</title>
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .error-message{background:rgba(229,62,62,.1);color:#c53030;padding:20px;border-radius:12px;border-left:4px solid #e53e3e;margin-bottom:20px;font-weight:600;border:1px solid rgba(229,62,62,.2)}
     </style>
 </head>
-<body>
+<body data-page="login">
 <div class="container">
     <div class="box">
         <h2>Recuperar contraseña</h2>
