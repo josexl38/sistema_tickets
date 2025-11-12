@@ -32,3 +32,4 @@ backup_*.sql
 # Archivos de sesión
 /tmp/
 /sessions/
+.env
