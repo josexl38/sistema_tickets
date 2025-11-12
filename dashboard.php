@@ -28,7 +28,7 @@ $notificaciones_pendientes = $stmt_notif->fetchColumn();
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="dashboard">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,7 +64,7 @@ $notificaciones_pendientes = $stmt_notif->fetchColumn();
         });
     </script>
 </head>
-<body>
+<body data-page="dashboard">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro">
         <span class="toggle-icon">🌙</span>
     </button>
