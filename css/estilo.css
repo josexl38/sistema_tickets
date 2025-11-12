@@ -2269,3 +2269,10 @@ body[data-page="reportes"]::before {
         background: white !important;
     }
 }
+
+
+/* Anular fondo azul del body para que se vea la imagen */
+body {
+  background: none !important;
+}
+
