@@ -2276,3 +2276,14 @@ body {
   background: none !important;
 }
 
+/* Más transparencia para las cajas */
+.box {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(15px) !important;
+}
+
+/* Versión modo oscuro */
+body.dark-mode .box {
+  background: rgba(45, 55, 72, 0.80) !important;
+  backdrop-filter: blur(15px) !important;
+}
