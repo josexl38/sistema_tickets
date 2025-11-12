@@ -2276,14 +2276,50 @@ body {
   background: none !important;
 }
 
-/* Más transparencia para las cajas */
-.box {
-  background: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(15px) !important;
+/* === Transparencia REAL de la caja principal === */
+body .container .box {
+  background: rgba(255, 255, 255, 0.78) !important; /* ajusta 0.78 a tu gusto */
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
 }
 
-/* Versión modo oscuro */
-body.dark-mode .box {
-  background: rgba(45, 55, 72, 0.80) !important;
-  backdrop-filter: blur(15px) !important;
+/* Quita el velo/overlay que estaba encima de la box */
+body .container .box::before {
+  background: none !important;
+  display: none !important;
+}
+
+/* Si quieres que los paneles internos también sean traslúcidos: */
+form,
+.dashboard-card,
+.respuesta-box,
+.filters-container,
+.stat-card,
+.wide-table,
+.kb-search,
+.kb-article,
+.kb-detail,
+.notification-item,
+.chart-container {
+  background: rgba(255, 255, 255, 0.70) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Versión en modo oscuro */
+body.dark-mode .container .box {
+  background: rgba(45, 55, 72, 0.72) !important;
+}
+body.dark-mode form,
+body.dark-mode .dashboard-card,
+body.dark-mode .respuesta-box,
+body.dark-mode .filters-container,
+body.dark-mode .stat-card,
+body.dark-mode .kb-search,
+body.dark-mode .kb-article,
+body.dark-mode .kb-detail,
+body.dark-mode .notification-item,
+body.dark-mode .chart-container {
+  background: rgba(74, 85, 104, 0.68) !important;
 }
