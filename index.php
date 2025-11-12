@@ -7,14 +7,14 @@ if (isset($_SESSION['usuario_id'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="index">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tickets VW</title>
     <link rel="stylesheet" href="css/estilo.css">
 </head>
-<body>
+<body data-page="index">
     <div class="container">
         <div class="box">
             <div class="logo-section">
