@@ -154,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Mostrar mensaje de éxito
             $mensaje_exito = "
             <!DOCTYPE html>
-            <html lang='es' data-page='inicio'>
+            <html lang='es' data-page='crear-ticket'>
             <head>
                 <meta charset='UTF-8'>
                 <title>Ticket creado</title>
@@ -231,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="crear-ticket">
 <head>
     <meta charset="UTF-8">
     <title>Crear nuevo ticket</title>

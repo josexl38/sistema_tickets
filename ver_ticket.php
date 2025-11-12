@@ -43,7 +43,7 @@ $tickets = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="ver-ticket">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

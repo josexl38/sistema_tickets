@@ -2013,3 +2013,259 @@ a:focus-visible {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(66, 153, 225, 0.5);
 }
+
+/* ============================================
+   SISTEMA DE FONDOS PERSONALIZADOS POR PAGINA
+   ============================================ */
+
+/* Configuracion base para todos los fondos */
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Overlay oscuro para mejorar legibilidad */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+/* ============================================
+   FONDOS ESPECIFICOS POR PAGINA
+   ============================================ */
+
+/* INDEX.PHP - Volkswagen Arteon */
+body[data-page="index"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRPR4IGbdYT0tEmeAWXsu5VOwcqeaz9EgLgQ&s');
+}
+
+/* LOGIN.PHP - Volkswagen ID.4 */
+body[data-page="login"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrCtB0ItI8wtkfEY7ZUPIydlapzJO6usUFQQ&s');
+}
+
+/* DASHBOARD.PHP - Cupra Formentor */
+body[data-page="dashboard"]::before {
+    background-image: url('https://p4.wallpaperbetter.com/wallpaper/183/828/40/concept-cupra-2020-cupra-formentor-hd-wallpaper-preview.jpg');
+}
+
+/* CREAR_TICKET.PHP - Volkswagen Tiguan */
+body[data-page="crear-ticket"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa1tgQihtYVPZj0zetHntfjDKKDHbJEY7G1g&s');
+}
+
+/* VER_TICKET.PHP - VW/Seat Dealership */
+body[data-page="ver-ticket"]::before {
+    background-image: url('https://i.pinimg.com/736x/a4/77/26/a477269a07a8b920e3b6f0f6842e5922.jpg');
+}
+
+/* VER_TICKET_DETALLE.PHP - Volkswagen Taos */
+body[data-page="ver-ticket-detalle"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREOh3FRJljL9xWsmsFQnX1Hus-ReOWzOyoiQ&s');
+}
+
+/* ADMIN_TICKETS.PHP - Seat Arona Sunset */
+body[data-page="admin-tickets"]::before {
+    background-image: url('https://www.shutterstock.com/image-photo/sunset-photo-red-seat-arona-260nw-2531839521.jpg');
+}
+
+/* ADMIN_VER_TICKET.PHP - Seat Leon */
+body[data-page="admin-ver-ticket"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrPpjlOltIptB5caHzZ_0SidQzbFsP_7hoag&s');
+}
+
+/* REPORTES.PHP - Cupra Leon */
+body[data-page="reportes"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7q5AeJ_ITEJ8gQ9Cr2Pw2aoc9gWNTCtKR8g&s');
+}
+
+/* ============================================
+   AJUSTES PARA MODO OSCURO
+   ============================================ */
+
+body.dark-mode::after {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+}
+
+/* ============================================
+   MEJORAS DE CONTRASTE PARA CAJAS
+   ============================================ */
+
+/* Aumentar opacidad de cajas principales para mejor legibilidad */
+.box {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+body.dark-mode .box {
+    background: rgba(45, 55, 72, 0.98) !important;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 8px 16px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Cards del dashboard */
+.dashboard-card {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+body.dark-mode .dashboard-card {
+    background: rgba(74, 85, 104, 0.98) !important;
+}
+
+/* Formularios */
+form {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+body.dark-mode form {
+    background: rgba(74, 85, 104, 0.98) !important;
+}
+
+/* Tablas y contenedores */
+.wide-table,
+.filters-container,
+.kb-search,
+.kb-article,
+.kb-detail,
+.notification-item,
+.chart-container,
+.stat-card,
+.respuesta-box {
+    background: rgba(255, 255, 255, 0.98) !important;
+}
+
+body.dark-mode .wide-table,
+body.dark-mode .filters-container,
+body.dark-mode .kb-search,
+body.dark-mode .kb-article,
+body.dark-mode .kb-detail,
+body.dark-mode .notification-item,
+body.dark-mode .chart-container,
+body.dark-mode .stat-card,
+body.dark-mode .respuesta-box {
+    background: rgba(74, 85, 104, 0.98) !important;
+}
+
+/* ============================================
+   ANIMACION DE ENTRADA SUAVE
+   ============================================ */
+
+@keyframes fadeInBackground {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+body::before {
+    animation: fadeInBackground 1s ease-in-out;
+}
+
+/* ============================================
+   RESPONSIVE - AJUSTES MOVILES
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* En moviles, reducir el blur para mejor rendimiento */
+    body::after {
+        backdrop-filter: blur(1px);
+    }
+
+    /* Aumentar contraste en moviles */
+    body::after {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    body.dark-mode::after {
+        background: rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* ============================================
+   FALLBACK SI LA IMAGEN NO CARGA
+   ============================================ */
+
+body::before {
+    background-color: #1e3c72; /* Azul VW de respaldo */
+}
+
+/* ============================================
+   OPTIMIZACION DE RENDIMIENTO
+   ============================================ */
+
+/* Mejorar rendimiento en animaciones */
+body::before,
+body::after {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ============================================
+   EFECTOS ESPECIALES PARA PAGINAS ESPECIFICAS
+   ============================================ */
+
+/* Dashboard con efecto de brillo sutil */
+body[data-page="dashboard"]::before {
+    filter: brightness(1.1) saturate(1.2);
+}
+
+/* Admin con tono mas serio */
+body[data-page="admin-tickets"]::before,
+body[data-page="admin-ver-ticket"]::before {
+    filter: brightness(0.9) saturate(0.9);
+}
+
+/* Reportes con mejor visibilidad */
+body[data-page="reportes"]::before {
+    filter: brightness(1.05);
+}
+
+/* ============================================
+   MODO PRINT - REMOVER FONDOS
+   ============================================ */
+
+@media print {
+    body::before,
+    body::after {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+}

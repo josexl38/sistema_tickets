@@ -50,7 +50,7 @@ if (isset($_GET["token"])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="login">
 <head>
     <meta charset="UTF-8">
     <title>Restablecer contraseña</title>

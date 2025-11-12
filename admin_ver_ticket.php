@@ -95,7 +95,7 @@ $plantillas = obtener_plantillas_respuestas($pdo);
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="admin-ver-ticket">
 <head>
     <meta charset="UTF-8">
     <title>Ticket #<?php echo $ticket["id"]; ?></title>

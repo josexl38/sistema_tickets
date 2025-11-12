@@ -28,7 +28,7 @@ $notificaciones_pendientes = $stmt_notif->fetchColumn();
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="dashboard">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

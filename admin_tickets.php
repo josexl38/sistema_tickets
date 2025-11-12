@@ -91,7 +91,7 @@ $stats = obtener_estadisticas_dashboard($pdo, null, true);
 ?>
 
 <!DOCTYPE html>
-<html lang="es" data-page="inicio">
+<html lang="es" data-page="admin-tickets">
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administrador</title>
