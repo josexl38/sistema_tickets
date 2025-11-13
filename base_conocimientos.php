@@ -1,7 +1,4 @@
-// Insertar artículos base
-    $stmt = $pdo->prepare("
-        INSERT INTO base_conocimientos 
-        (titulo, contenido, categoria, tags, activo, vistas, util_si,<?php
+<?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/funciones.php';
