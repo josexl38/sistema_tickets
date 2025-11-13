@@ -460,7 +460,7 @@ if ($_POST['voto'] ?? false) {
         
     </style>
 </head>
-<body data-page="base-conocimientos">
+<body data-page="ver-ticket">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro"></button>
     
     <div class="container" style="max-width: 100%;">
