@@ -419,6 +419,45 @@ if ($_POST['voto'] ?? false) {
                 justify-content: center;
             }
         }
+
+        body[data-page="base-conocimientos"] {
+            background: none !important;
+        }
+        
+        body[data-page="base-conocimientos"] .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            display: block;      /* por si en estilo.css está como flex */
+            min-height: auto;
+        }
+        
+        body[data-page="base-conocimientos"] .box {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        body[data-page="base-conocimientos"] .box::before {
+            display: none;
+        }
+        
+        body[data-page="base-conocimientos"] .kb-voting {
+            background: rgba(66, 153, 225, 0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(66, 153, 225, 0.25);
+            overflow: hidden; /* evita que se vea corte raro en el centro */
+        }
+        
+        body[data-page="base-conocimientos"] .kb-voting .vote-buttons {
+            gap: 12px;
+        }
+        
+        body[data-page="base-conocimientos"] .kb-voting .vote-btn {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
     </style>
 </head>
 <body data-page="base-conocimientos">
