@@ -1,4 +1,7 @@
-<?php
+// Insertar artículos base
+    $stmt = $pdo->prepare("
+        INSERT INTO base_conocimientos 
+        (titulo, contenido, categoria, tags, activo, vistas, util_si,<?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/funciones.php';
@@ -109,10 +112,11 @@ function instalar_articulos_base($pdo) {
     $count = $stmt_check->fetchColumn();
     
     if ($count > 0) {
-        return false; // Ya hay artículos, no instalar
+        return 0; // Ya hay artículos, no instalar
     }
     
     // Insertar artículos base
+    $contador = 0;
     $stmt = $pdo->prepare("
         INSERT INTO base_conocimientos 
         (titulo, contenido, categoria, tags, activo, vistas, util_si, util_no, fecha_creacion) 
@@ -126,15 +130,16 @@ function instalar_articulos_base($pdo) {
             $articulo['categoria'],
             $articulo['tags']
         ]);
+        $contador++;
     }
     
-    return true;
+    return $contador;
 }
 
 // Verificar e instalar artículos base si es necesario
 $instalacion = instalar_articulos_base($pdo);
-if ($instalacion) {
-    $_SESSION['mensaje'] = "✅ Se instalaron " . count($articulos_base) . " artículos base en la base de conocimientos";
+if ($instalacion > 0) {
+    $_SESSION['mensaje'] = "✅ Se instalaron $instalacion artículos base en la base de conocimientos";
 }
 
 $busqueda = $_GET['buscar'] ?? '';
