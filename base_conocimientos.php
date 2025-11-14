@@ -212,8 +212,10 @@ if ($_POST['voto'] ?? false) {
             background: rgba(255, 255, 255, 0.85);
             padding: 24px;
             border-radius: 16px;
-            margin-bottom: 24px;
+            margin: 0 auto 24px auto;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            max-width: 900px;
+            width: 100%;
         }
         
         .kb-article {
