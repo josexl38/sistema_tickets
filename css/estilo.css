@@ -2348,3 +2348,10 @@ body.dark-mode .category-tag.active {
     background: #4299e1 !important;
     color: #ffffff !important;
 }
+/* ==== FONDO PERSONALIZADO PARA BASE DE CONOCIMIENTOS ==== */
+body[data-page="base-conocimientos"] {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxxhy1kzLG1ZjDmvOFSNssWhCo3gQDoDfzaA&s') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+}
