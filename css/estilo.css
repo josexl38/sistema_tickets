@@ -2100,6 +2100,11 @@ body[data-page="reportes"]::before {
     background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7q5AeJ_ITEJ8gQ9Cr2Pw2aoc9gWNTCtKR8g&s');
 }
 
+/* ==== FONDO PERSONALIZADO PARA BASE DE CONOCIMIENTOS ==== */
+body[data-page="base-conocimientos"]::before {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxxhy1kzLG1ZjDmvOFSNssWhCo3gQDoDfzaA&s');
+}
+
 /* ============================================
    AJUSTES PARA MODO OSCURO
    ============================================ */
@@ -2348,13 +2353,7 @@ body.dark-mode .category-tag.active {
     background: #4299e1 !important;
     color: #ffffff !important;
 }
-/* ==== FONDO PERSONALIZADO PARA BASE DE CONOCIMIENTOS ==== */
-body[data-page="base-conocimientos"] {
-    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxxhy1kzLG1ZjDmvOFSNssWhCo3gQDoDfzaA&s') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-attachment: fixed !important;
-}
+
 /* === CATEGORY TAGS – MODO OSCURO (corregir colores invisibles) === */
 body.dark-mode .category-tag {
     background: rgba(255, 255, 255, 0.08) !important;
