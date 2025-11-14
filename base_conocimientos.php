@@ -423,10 +423,36 @@ if ($_POST['voto'] ?? false) {
                 justify-content: center;
             }
         }
+        /* --- Ajustes SOLO para la página de Base de Conocimientos --- */
+
+/* Que el contenedor kb-search no sea el panel grande, solo un wrapper */
+body[data-page="base-conocimientos"] .kb-search {
+    background: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* El panel bonito será el FORM, centrado y con ancho máximo */
+body[data-page="base-conocimientos"] .kb-search > form {
+    background: rgba(255, 255, 255, 0.85) !important;
+    padding: 24px !important;
+    border-radius: 16px !important;
+    margin: 0 auto 24px auto !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    max-width: 900px;
+    width: 100%;
+}
+
+/* Para que el título también vaya centrado */
+body[data-page="base-conocimientos"] h2 {
+    text-align: center;
+}
+
 
     </style>
 </head>
-<body data-page="admin-tickets">
+<body data-page="base-conocimientos">
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Alternar modo oscuro"></button>
     
     <div class="container" style="max-width: 100%;">
