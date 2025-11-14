@@ -2392,3 +2392,17 @@ body.dark-mode .kb-search input[type="text"]::placeholder {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
+/* Eliminar blur únicamente en el votador */
+.kb-voting {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(66, 153, 225, 0.10) !important; /* mismo color pero sin blur */
+}
+
+.kb-voting * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: transparent !important;
+}
+
