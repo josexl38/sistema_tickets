@@ -2323,3 +2323,28 @@ body.dark-mode .notification-item,
 body.dark-mode .chart-container {
   background: rgba(74, 85, 104, 0.68) !important;
 }
+/* ==== BASE DE CONOCIMIENTOS - MODO OSCURO ==== */
+body.dark-mode .kb-search label {
+    color: #e2e8f0 !important;   /* texto clarito */
+}
+
+body.dark-mode .kb-search input[type="text"] {
+    background: rgba(30, 41, 59, 0.95) !important;  /* gris oscuro */
+    color: #f9fafb !important;                      /* texto claro */
+    border-color: rgba(148, 163, 184, 0.85) !important;
+}
+
+body.dark-mode .kb-search input[type="text"]::placeholder {
+    color: rgba(148, 163, 184, 0.9) !important;     /* placeholder gris claro */
+}
+
+body.dark-mode .category-tag {
+    background: rgba(30, 64, 175, 0.3) !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(129, 140, 248, 0.7) !important;
+}
+
+body.dark-mode .category-tag.active {
+    background: #4299e1 !important;
+    color: #ffffff !important;
+}
