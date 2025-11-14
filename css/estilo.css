@@ -2383,3 +2383,12 @@ body.dark-mode .kb-search input[type="text"] {
 body.dark-mode .kb-search input[type="text"]::placeholder {
     color: rgba(148, 163, 184, 0.7) !important;
 }
+
+/* === FIX: Eliminar línea/blanco dentro del votador === */
+.kb-voting form,
+.kb-voting .vote-buttons,
+.kb-voting .vote-btn {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
