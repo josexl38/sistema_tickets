@@ -2355,3 +2355,32 @@ body[data-page="base-conocimientos"] {
     background-position: center !important;
     background-attachment: fixed !important;
 }
+/* === CATEGORY TAGS – MODO OSCURO (corregir colores invisibles) === */
+body.dark-mode .category-tag {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+body.dark-mode .category-tag:hover {
+    background: rgba(66, 153, 225, 0.4) !important;
+}
+
+body.dark-mode .category-tag.active {
+    background: #4299e1 !important;
+    color: #ffffff !important;
+}
+/* ==== BUSCADOR – MODO OSCURO ==== */
+body.dark-mode .kb-search label {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .kb-search input[type="text"] {
+    background: rgba(30, 41, 59, 0.9) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+}
+
+body.dark-mode .kb-search input[type="text"]::placeholder {
+    color: rgba(148, 163, 184, 0.7) !important;
+}
